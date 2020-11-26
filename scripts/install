@@ -1,0 +1,220 @@
+#!/bin/bash
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source ynh_exec_as
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+is_public=$YNH_APP_ARG_IS_PUBLIC
+
+deskey=$(ynh_string_random --length=24)
+
+app=$YNH_APP_INSTANCE_NAME
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
+
+final_path=/var/www/$app
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
+
+# Register (book) web path
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=1
+
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path_url --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=deskey --value=$deskey
+ynh_app_setting_set --app=$app --key=phpversion --value=$YNH_PHP_VERSION
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing dependencies..." --weight=1
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# CREATE A MYSQL DATABASE
+#=================================================
+ynh_script_progression --message="Creating a PSQL database..." --weight=1
+
+db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_user="$db_name"
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --weight=1
+
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring nginx web server..." --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+if [ "$path_url" = "/" ]
+then
+  # Replace "//" location (due to nginx template)
+  # Prevent from replacing in "http://" expressions by excluding ":" as preceding character
+  sed --in-place "s@\([^:]\)//@\1/@g" /etc/nginx/conf.d/$domain.d/$app.conf
+else
+  # Move prefix comment #for-subdir at end of lines
+  sed --in-place "s/#for-subdir\(.*\)/\1 #for-subdir/g" /etc/nginx/conf.d/$domain.d/$app.conf
+fi
+
+ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=1
+
+# Create a system user
+ynh_system_user_create --username=$app
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring php-fpm..." --weight=1
+
+# Create a dedicated php-fpm config
+ynh_add_fpm_config --usage=low --footprint=low --package="$extra_php_dependencies"
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# CONFIGURE AENERIA
+#=================================================
+ynh_script_progression --message="Configuring æneria..." --weight=1
+
+aeneria_conf="$final_path/.env"
+cp ../conf/.env $aeneria_conf
+
+ynh_replace_string --match_string="database_name" --replace_string="${db_name}" --target_file="$aeneria_conf"
+ynh_replace_string --match_string="database_user" --replace_string="${db_user}" --target_file="$aeneria_conf"
+ynh_replace_string --match_string="database_password" --replace_string="${db_pwd}" --target_file="$aeneria_conf"
+ynh_replace_string --match_string="app_secret" --replace_string="${deskey}" --target_file="$aeneria_conf"
+
+# Restrict rights to aeneria user only
+chmod 600 "$aeneria_conf"
+
+#=================================================
+# INSTALL AENERIA
+#=================================================
+ynh_script_progression --message="Installing æneria..." --weight=1
+
+# Set permissions to app files
+chown -R $app: $final_path
+chmod 755 $final_path
+
+# Install aeneria
+pushd $final_path
+  ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
+
+  # Create aeneria's user
+  for username in $(ynh_user_list)
+  do
+    mail=$(ynh_user_get_info --username=$username --key='mail')
+    user_pass=$(ynh_string_random)
+    ynh_exec_as $app php$phpversion bin/console pilea:user:add "$mail" "$user_pass"
+  done
+
+  # Set admin user
+  mail=$(ynh_user_get_info --username=$admin --key='mail')
+  ynh_exec_as $app php$phpversion bin/console pilea:user:grant "$mail"
+popd
+
+#=================================================
+# SET UP CRON JOB
+#=================================================
+ynh_script_progression --message="Setuping a cron job..." --weight=1
+
+cron_path="/etc/cron.d/$app"
+cp -a ../conf/aeneria.cron "$cron_path"
+chown root: "$cron_path"
+chmod 644 "$cron_path"
+
+ynh_replace_string "#USER#" "$app" "$cron_path"
+ynh_replace_string "#DESTDIR#" "$final_path" "$cron_path"
+
+#=================================================
+# ADAPT HOOK FOR PILEA INSTANCE
+#=================================================
+ynh_script_progression --message="Adapting hooks..." --weight=1
+
+ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_create"
+ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_delete"
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+ynh_script_progression --message="Securing files and directories..." --weight=1
+
+# Set permissions to app files
+chown -R $app: $final_path
+chmod 755 $final_path
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
+
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+  ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
+fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --weight=1
+
+ynh_systemd_action --service_name=php$phpversion-fpm --action=reload
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --last

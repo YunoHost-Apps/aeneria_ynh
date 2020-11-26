@@ -1,0 +1,35 @@
+diff --git a/config/packages/security.yaml b/config/packages/security.yaml
+index 9ce714b..eb38efd 100644
+--- a/config/packages/security.yaml
++++ b/config/packages/security.yaml
+@@ -20,6 +20,10 @@ security:
+                 provider: app_user_provider
+                 authenticators:
+                     - App\Security\LoginFormAuthenticator
++            http_basic_ldap:
++                provider: app_user_provider
++                service: yunohost.ldap
++                dn_string: "uid={email},ou=users,dc=yunohost,dc=org"
+             logout:
+                 path: app_logout
+                 target: app_login
+diff --git a/config/services.yaml b/config/services.yaml
+index bd2a89b..af2f525 100644
+--- a/config/services.yaml
++++ b/config/services.yaml
+@@ -22,4 +22,13 @@ services:
+
+     App\Twig\:
+         resource: '../src/Twig'
+-        tags: ['twig.extension', 'container.hot_path']
+\ No newline at end of file
++        tags: ['twig.extension', 'container.hot_path']
++
++    yunohost.ldap:
++        class: Symfony\Component\Ldap\Ldap
++        arguments: ['@yunohost.ldap.adapter']
++
++    yunohost.ldap.adapter:
++        class: Symfony\Component\Ldap\Adapter\ExtLdap\Adapter
++        arguments:
++            - host: "localhost"

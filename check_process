@@ -1,0 +1,29 @@
+;; Complete test
+	; Manifest
+		domain="domain.tld"	(DOMAIN)
+		path="/path"	(PATH)
+		admin="john"	(USER)
+		language="en"
+		is_public=1	(PUBLIC|public=1|private=0)
+	; Checks
+		pkg_linter=1
+		setup_sub_dir=1
+		setup_root=1
+		setup_nourl=0
+		setup_private=1
+		setup_public=1
+		upgrade=1
+		upgrade=1	from_commit=b27d469fb28bb9491f1f24ff687709d2cce1eb5f
+		backup_restore=1
+		multi_instance=1
+		incorrect_path=1
+		port_already_use=0
+		change_url=1
+;;; Levels
+	Level 5=auto
+;;; Options
+Email=
+Notification=change
+;;; Upgrade options
+	; commit=b27d469fb28bb9491f1f24ff687709d2cce1eb5f
+		name=0.5.3
