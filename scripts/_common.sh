@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="apt-transport-https postgresql postgresql-contrib"
+pkg_dependencies="apt-transport-https postgresql postgresql-client"
 
 YNH_PHP_VERSION="7.3"
 
