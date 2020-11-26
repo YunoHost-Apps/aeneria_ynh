@@ -1,10 +1,9 @@
 # æneria for YunoHost
 
+**DO NOT USE, WORK IN PROGRESS**
+
 [![Integration level](https://dash.yunohost.org/integration/aeneria.svg)](https://dash.yunohost.org/appci/app/aeneria) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.maintain.svg)
 [![Install æneria with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=aeneria)
-
-
-**DO NOT USE, WORK IN PROGRESS**
 
 > *This package allows you to install æeneria quickly and simply on a YunoHost server.
 If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
@@ -37,7 +36,7 @@ More information can be found on [æneria documentation](https://docs.aeneria.co
 
 ## Comming from Pilea
 
-æneria is the new name Pilea. This new name came whith a brand new version.
+æneria is the new name of Pilea. This new name came whith a brand new version.
 
 This new version instroduce some breaking changes in data structure : migration from Pilea can't be done automaticly. But don't worry, if you want to migrate from Pilea, and
 keep all of your data, follow [this documentation]().
