@@ -1,5 +1,5 @@
 diff --git a/config/packages/security.yaml b/config/packages/security.yaml
-index 9ce714b..eb38efd 100644
+index 15ef608..aa9425b 100644
 --- a/config/packages/security.yaml
 +++ b/config/packages/security.yaml
 @@ -20,6 +20,10 @@ security:
@@ -11,19 +11,16 @@ index 9ce714b..eb38efd 100644
 +                service: yunohost.ldap
 +                dn_string: "uid={email},ou=users,dc=yunohost,dc=org"
              logout:
-                 path: app_logout
-                 target: app_login
+                 path: security.logout
+                 target: security.login
 diff --git a/config/services.yaml b/config/services.yaml
-index bd2a89b..af2f525 100644
+index 533c244..0d15678 100644
 --- a/config/services.yaml
 +++ b/config/services.yaml
-@@ -22,4 +22,13 @@ services:
+@@ -70,3 +70,12 @@ services:
 
-     App\Twig\:
-         resource: '../src/Twig'
--        tags: ['twig.extension', 'container.hot_path']
-\ No newline at end of file
-+        tags: ['twig.extension', 'container.hot_path']
+     Aeneria\EnedisDataConnectApi\Service\DataConnectServiceInterface:
+         alias: Aeneria\EnedisDataConnectApi\Service\DataConnectService
 +
 +    yunohost.ldap:
 +        class: Symfony\Component\Ldap\Ldap
