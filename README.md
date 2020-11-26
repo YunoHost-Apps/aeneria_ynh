@@ -22,13 +22,9 @@ The idea of [æneria](https://gitlab.com/aeneria/aeneria-app) is to display elec
 
 ## Configuration
 
-First of all:
-
-* You'll need a Linky (obviously) and a [Enedis account](https://mon-compte-client.enedis.fr/)
-
-Then, go parameter page to follow instructions.
-
-That's it, now wait a bit to see data appear !
+* First of all, you'll need a Linky (obviously) and an [Enedis account](https://mon-compte-client.enedis.fr/)
+* After you have installed the app, just visit it and follow instructions
+* That's it, now wait a bit to see data appear !
 
 ## Documentation
 

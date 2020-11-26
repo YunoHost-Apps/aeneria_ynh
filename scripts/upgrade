@@ -160,26 +160,26 @@ ynh_script_progression --message="Upgrading æneria..." --weight=1
 chown -R $app: $final_path
 chmod 755 $final_path
 
-# Install dependencies and Pilea
+# Install dependencies and aeneria
 pushd $final_path
   ynh_exec_as $app php$phpversion bin/console cache:clear -n
   ynh_exec_as $app php$phpversion bin/console doctrine:migrations:migrate -n
 
-  # Create Pilea's user
+  # Create aeneria's user
   for username in $(ynh_user_list)
   do
     mail=$(ynh_user_get_info --username=$username --key='mail')
-    user_exists=$(ynh_exec_as $app php$phpversion bin/console pilea:user:exist "$mail")
+    user_exists=$(ynh_exec_as $app php$phpversion bin/console aeneria:user:exist "$mail")
     if [ $user_exists -eq 0 ]
     then
       user_pass=$(ynh_string_random)
-      ynh_exec_as $app php$phpversion bin/console pilea:user:add "$mail" "$user_pass" -n
+      ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass" -n
     fi
   done
 
   # Set admin user
   mail=$(ynh_user_get_info --username=$admin --key='mail')
-  ynh_exec_as $app php$phpversion bin/console pilea:user:grant "$mail"
+  ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
 popd
 
 #=================================================
@@ -188,7 +188,7 @@ popd
 ynh_script_progression --message="Setuping a cron job..." --weight=1
 
 cron_path="/etc/cron.d/$app"
-cp -a ../conf/pilea.cron "$cron_path"
+cp -a ../conf/aeneria.cron "$cron_path"
 chown root: "$cron_path"
 chmod 644 "$cron_path"
 
@@ -196,7 +196,7 @@ ynh_replace_string --match_string="#USER#" --replace_string="$app" --target_file
 ynh_replace_string --match_string="#DESTDIR#" --replace_string="$final_path" --target_file="$cron_path"
 
 #=================================================
-# ADAPT HOOK FOR PILEA INSTANCE
+# ADAPT HOOK FOR AENERIA INSTANCE
 #=================================================
 ynh_script_progression --message="Adapting hooks..." --weight=1
 ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string=$app --target_file="../hooks/post_user_create"

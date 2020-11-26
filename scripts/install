@@ -63,9 +63,11 @@ ynh_script_progression --message="Installing dependencies..." --weight=1
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# CREATE A MYSQL DATABASE
+# CREATE A PSQL DATABASE
 #=================================================
 ynh_script_progression --message="Creating a PSQL database..." --weight=1
+
+ynh_psql_test_if_first_run
 
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user="$db_name"
@@ -154,12 +156,12 @@ pushd $final_path
   do
     mail=$(ynh_user_get_info --username=$username --key='mail')
     user_pass=$(ynh_string_random)
-    ynh_exec_as $app php$phpversion bin/console pilea:user:add "$mail" "$user_pass"
+    ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass"
   done
 
   # Set admin user
   mail=$(ynh_user_get_info --username=$admin --key='mail')
-  ynh_exec_as $app php$phpversion bin/console pilea:user:grant "$mail"
+  ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
 popd
 
 #=================================================
@@ -176,7 +178,7 @@ ynh_replace_string "#USER#" "$app" "$cron_path"
 ynh_replace_string "#DESTDIR#" "$final_path" "$cron_path"
 
 #=================================================
-# ADAPT HOOK FOR PILEA INSTANCE
+# ADAPT HOOK FOR AENERIA INSTANCE
 #=================================================
 ynh_script_progression --message="Adapting hooks..." --weight=1
 
