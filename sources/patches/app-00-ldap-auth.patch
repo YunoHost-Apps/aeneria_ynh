@@ -1,26 +1,45 @@
+commit c7a763a0fae7e1933f280b29bd2a1911b01f7170
+Author: Simon Mellerin <simon.mellerin@makina-corpus.com>
+Date:   Fri Nov 27 12:19:02 2020 +0100
+
+    toto
+
 diff --git a/config/packages/security.yaml b/config/packages/security.yaml
-index 15ef608..aa9425b 100644
+index 15ef608..8516775 100644
 --- a/config/packages/security.yaml
 +++ b/config/packages/security.yaml
-@@ -20,6 +20,10 @@ security:
+@@ -10,6 +10,8 @@ security:
+             entity:
+                 class: App\Entity\User
+                 property: username
++        user_provider_yunohost:
++            id: yunohost.provider.ldap
+     firewalls:
+         dev:
+             pattern: ^/(_(profiler|wdt)|css|images|js)/
+@@ -20,6 +22,10 @@ security:
                  provider: app_user_provider
                  authenticators:
                      - App\Security\LoginFormAuthenticator
 +            http_basic_ldap:
-+                provider: app_user_provider
++                provider: user_provider_yunohost
 +                service: yunohost.ldap
-+                dn_string: "uid={email},ou=users,dc=yunohost,dc=org"
++                dn_string: "uid={username},ou=users,dc=yunohost,dc=org"
              logout:
                  path: security.logout
                  target: security.login
 diff --git a/config/services.yaml b/config/services.yaml
-index 533c244..0d15678 100644
+index 533c244..9362ef5 100644
 --- a/config/services.yaml
 +++ b/config/services.yaml
-@@ -70,3 +70,12 @@ services:
+@@ -70,3 +70,16 @@ services:
 
      Aeneria\EnedisDataConnectApi\Service\DataConnectServiceInterface:
          alias: Aeneria\EnedisDataConnectApi\Service\DataConnectService
++
++    yunohost.provider.ldap:
++        class: App\Security\YunohostLdapUserProvider
++        arguments: ["@yunohost.ldap", "ou=users,dc=yunohost,dc=org"]
 +
 +    yunohost.ldap:
 +        class: Symfony\Component\Ldap\Ldap
@@ -30,3 +49,132 @@ index 533c244..0d15678 100644
 +        class: Symfony\Component\Ldap\Adapter\ExtLdap\Adapter
 +        arguments:
 +            - host: "localhost"
+diff --git a/src/Security/YunohostLdapUserProvider.php b/src/Security/YunohostLdapUserProvider.php
+new file mode 100644
+index 0000000..39ba1e8
+--- /dev/null
++++ b/src/Security/YunohostLdapUserProvider.php
+@@ -0,0 +1,123 @@
++<?php
++
++namespace App\Security;
++
++use App\Entity\User;
++use App\Repository\UserRepository;
++use Symfony\Component\Ldap\Entry;
++use Symfony\Component\Ldap\Exception\ConnectionException;
++use Symfony\Component\Ldap\LdapInterface;
++use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
++use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
++use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
++use Symfony\Component\Security\Core\User\UserInterface;
++use Symfony\Component\Security\Core\User\UserProviderInterface;
++
++/**
++ * Adapted from LdapUserProvider.
++ *
++ * @author Grégoire Pineau <lyrixx@lyrixx.info>
++ * @author Charles Sarrazin <charles@sarraz.in>
++ * @author Robin Chalas <robin.chalas@gmail.com>
++ */
++class YunohostLdapUserProvider implements UserProviderInterface
++{
++    /** @var LdapInterface */
++    private $ldap;
++    /** @var string */
++    private $baseDn;
++    /** @var string */
++    private $searchDn;
++    /** @var string */
++    private $searchPassword;
++    /** @var string[] */
++    private $defaultRoles;
++    /** @var string */
++    private $uidKey;
++    /** @var string */
++    private $defaultSearch;
++    /** @var UserRepository */
++    private $userRepository;
++
++    public function __construct(
++        LdapInterface $ldap,
++        string $baseDn,
++        string $searchDn = null,
++        string $searchPassword = null,
++        array $defaultRoles = [],
++        UserRepository $userRepository
++    ) {
++        $this->ldap = $ldap;
++        $this->baseDn = $baseDn;
++        $this->searchDn = $searchDn;
++        $this->searchPassword = $searchPassword;
++        $this->defaultRoles = $defaultRoles;
++        $this->defaultSearch = '(uid={username})';
++
++        $this->userRepository = $userRepository;
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function loadUserByUsername(string $username)
++    {
++        try {
++            $this->ldap->bind($this->searchDn, $this->searchPassword);
++            $username = $this->ldap->escape($username, '', LdapInterface::ESCAPE_FILTER);
++            $query = str_replace('{username}', $username, $this->defaultSearch);
++            $search = $this->ldap->query($this->baseDn, $query);
++        } catch (ConnectionException $e) {
++            throw new UsernameNotFoundException(sprintf('User "%s" not found.', $username), 0, $e);
++        }
++
++        $entries = $search->execute();
++        $count = \count($entries);
++
++        if (!$count) {
++            die($username . 'ldap pas trouvé');
++            throw new UsernameNotFoundException(sprintf('User "%s" not found.', $username));
++        }
++
++        if ($count > 1) {
++            throw new UsernameNotFoundException('More than one user found.');
++        }
++
++        $entry = $entries[0];
++
++        $username = $this->getAttributeValue($entry, 'mail');
++
++        return $this->userRepository->findOneBy(['username' => $username]);
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function refreshUser(UserInterface $user)
++    {
++        if (!$user instanceof User) {
++            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
++        }
++
++        return $this->userRepository->findOneBy(['username' => $user->getUsername()]);
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function supportsClass(string $class)
++    {
++        return User::class === $class;
++    }
++
++    private function getAttributeValue(Entry $entry, string $attribute)
++    {
++        if (!$entry->hasAttribute($attribute)) {
++            throw new InvalidArgumentException(sprintf('Missing attribute "%s" for user "%s".', $attribute, $entry->getDn()));
++        }
++
++        $values = $entry->getAttribute($attribute);
++
++        return $values[0];
++    }
++}
