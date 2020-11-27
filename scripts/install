@@ -91,18 +91,6 @@ ynh_script_progression --message="Configuring nginx web server..." --weight=1
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
-if [ "$path_url" = "/" ]
-then
-  # Replace "//" location (due to nginx template)
-  # Prevent from replacing in "http://" expressions by excluding ":" as preceding character
-  sed --in-place "s@\([^:]\)//@\1/@g" /etc/nginx/conf.d/$domain.d/$app.conf
-else
-  # Move prefix comment #for-subdir at end of lines
-  sed --in-place "s/#for-subdir\(.*\)/\1 #for-subdir/g" /etc/nginx/conf.d/$domain.d/$app.conf
-fi
-
-ynh_store_file_checksum --file="/etc/nginx/conf.d/$domain.d/$app.conf"
-
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -204,7 +192,7 @@ ynh_script_progression --message="Configuring SSOwat..." --weight=1
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-  ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
+  ynh_permission_update --permission "main" --add visitors
 fi
 
 #=================================================
