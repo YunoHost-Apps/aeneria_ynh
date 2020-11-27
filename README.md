@@ -34,9 +34,9 @@ More information can be found on [æneria documentation](https://docs.aeneria.co
 
 æneria is the new name of Pilea. This new name came whith a brand new version.
 
-This new version introduced some breaking changes in data structure : migration from Pilea can't be done automaticly.
+This new version introduced some breaking changes in data structure: migration from Pilea can't be done automaticly.
 
-But don't worry, you can easilly transfer your data from Pilea to æneria : follow [this documentation](https://docs.aeneria.com/fr/latest/administrateur/pilea_migration.html).
+But don't worry, you can easilly transfer your data from Pilea to æneria, just follow [this documentation](https://docs.aeneria.com/fr/latest/administrateur/pilea_migration.html).
 
 ## YunoHost specific features
 
