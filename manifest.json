@@ -50,6 +50,10 @@
                     "en": "Is it a public website?",
                     "fr": "Est-ce un site public ?"
                 },
+                "help": {
+                    "en": "Choose whether the app should be accessible only for your yunohost users or for everyone.",
+                    "fr": "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs yunohost ou pour tout le monde."
+                },
                 "default": false
             },
             {
