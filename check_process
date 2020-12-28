@@ -13,7 +13,7 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		upgrade=1	from_commit=889de2cc2a85ea0ff24c126387bb5000aa352ac1
+		upgrade=1	from_commit=702db62e7b25c06972301828b275529a087a98ba
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=1
@@ -25,5 +25,5 @@
 Email=
 Notification=change
 ;;; Upgrade options
-	; commit=889de2cc2a85ea0ff24c126387bb5000aa352ac1
+	; commit=702db62e7b25c06972301828b275529a087a98ba
 		name=1.0.3
