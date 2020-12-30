@@ -2,8 +2,6 @@ commit c7a763a0fae7e1933f280b29bd2a1911b01f7170
 Author: Simon Mellerin <simon.mellerin@makina-corpus.com>
 Date:   Fri Nov 27 12:19:02 2020 +0100
 
-    toto
-
 diff --git a/config/packages/security.yaml b/config/packages/security.yaml
 index 15ef608..8516775 100644
 --- a/config/packages/security.yaml
