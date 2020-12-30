@@ -85,8 +85,16 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..."
 
+	# Create tmpdir for new sources
+	tmpdir="$(ynh_smart_mktemp min_size=300)"
+
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path"
+	ynh_setup_source --dest_dir="$tmpdir"
+
+	# Replace the old aeneria by the new one
+	ynh_secure_remove --file="$final_path"
+	mv "$tmpdir" "$final_path"
+	ynh_secure_remove --file="$tmpdir"
 fi
 
 #=================================================
