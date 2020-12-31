@@ -1,5 +1,5 @@
-SOURCE_URL=https://statics.aeneria.com/aeneria-app-1.0.3.tar.gz
-SOURCE_SUM=f61cf16edd8a435f693261243e2d671487f28e8253c17885da77397cd8878887
+SOURCE_URL=https://statics.aeneria.com/aeneria-app-1.0.4.tar.gz
+SOURCE_SUM=900e165d2992c1349b2ed1fff8fda7ec999b78c70e6a14043800defdb715a91d
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true

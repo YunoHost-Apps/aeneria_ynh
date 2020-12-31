@@ -1,7 +1,5 @@
 # æneria for YunoHost
 
-**DO NOT USE, WORK IN PROGRESS**
-
 [![Integration level](https://dash.yunohost.org/integration/aeneria.svg)](https://dash.yunohost.org/appci/app/aeneria) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.maintain.svg)
 [![Install æneria with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=aeneria)
 
@@ -9,12 +7,12 @@
 If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
 
 ## Overview
-The idea of [æneria](https://gitlab.com/aeneria/aeneria-app) is to display electricity consumption and weather data on a little dashboard that allow the user to:
+The idea of [æneria](https://gitlab.com/aeneria/aeneria-app) is to display energy consumption and weather data on a little dashboard that allow the user to:
 
- * Better understand his electricity consumption
- * Analyse his electricity consumption throw weather data
+ * Better understand our own energy consumption
+ * Analyse energy consumption throw weather data
 
- **Shipped version:** 1.0.3
+ **Shipped version:** 1.0.4
 
 ## Screenshots
 
@@ -22,8 +20,9 @@ The idea of [æneria](https://gitlab.com/aeneria/aeneria-app) is to display elec
 
 ## Configuration
 
-* First of all, you'll need a Linky (obviously) and an [Enedis account](https://mon-compte-client.enedis.fr/)
-* After you have installed the app, just visit it and follow instructions
+* First of all, you'll need a Linky and an [Enedis account](https://mon-compte-client.enedis.fr/)
+* In your Enedis space, go to ["Gérer l'accès à mes données"](https://mon-compte-particulier.enedis.fr/donnees/) tab, and allow Enedis to collect and store your hourly consumption
+* After that, install æneria to your Yunohost instance, visit it and just follow instructions
 * That's it, now wait a bit to see data appear !
 
 ## Documentation
@@ -36,7 +35,7 @@ More information can be found on [æneria documentation](https://docs.aeneria.co
 
 This new version introduced some breaking changes in data structure: migration from Pilea can't be done automaticly.
 
-But don't worry, you can easilly transfer your data from Pilea to æneria, just follow [this documentation](https://docs.aeneria.com/fr/latest/administrateur/pilea_migration.html).
+But don't worry, you can easilly transfer your data from Pilea to æneria following [this documentation](https://docs.aeneria.com/fr/latest/administrateur/pilea_migration.html).
 
 ## YunoHost specific features
 
