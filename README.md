@@ -12,7 +12,7 @@ The idea of [æneria](https://gitlab.com/aeneria/aeneria-app) is to display ener
  * Better understand our own energy consumption
  * Analyse energy consumption throw weather data
 
- **Shipped version:** 1.0.4
+ **Shipped version:** 1.1.0
 
 ## Screenshots
 
