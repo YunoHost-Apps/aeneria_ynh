@@ -7,7 +7,7 @@
 If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
 
 ## Overview
-The idea of [æneria](https://gitlab.com/aeneria/aeneria-app) is to display energy consumption and weather data on a little dashboard that allow the user to:
+The idea of [æneria](https://aeneria.com) is to display energy consumption and weather data on a little dashboard that allow the user to:
 
  * Better understand our own energy consumption
  * Analyse energy consumption throw weather data
@@ -50,6 +50,7 @@ But don't worry, you can easilly transfer your data from Pilea to æneria follow
 
 ## Links
 
+ * æneria website: https://aeneria.com/
  * æneria repo: https://gitlab.com/aeneria/aeneria-app
  * YunoHost website: https://yunohost.org/
 
