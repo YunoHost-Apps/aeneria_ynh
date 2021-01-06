@@ -148,7 +148,6 @@ ynh_replace_string --match_string="database_name" --replace_string="${db_name}" 
 ynh_replace_string --match_string="database_user" --replace_string="${db_user}" --target_file="$aeneria_conf"
 ynh_replace_string --match_string="database_password" --replace_string="${db_pwd}" --target_file="$aeneria_conf"
 ynh_replace_string --match_string="app_secret" --replace_string="${deskey}" --target_file="$aeneria_conf"
-ynh_replace_string --match_string="base_path" --replace_string="${path_url}" --target_file="$aeneria_conf"
 
 # Restrict rights to aeneria user only
 chmod 600 "$aeneria_conf"
