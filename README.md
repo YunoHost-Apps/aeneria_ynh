@@ -1,7 +1,7 @@
 # æneria for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/aeneria.svg)](https://dash.yunohost.org/appci/app/aeneria) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.maintain.svg)
-[![Install æneria with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=aeneria)
+[![Install æneria with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=aeneria)
 
 > *This package allows you to install æeneria quickly and simply on a YunoHost server.
 If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
@@ -12,7 +12,7 @@ The idea of [æneria](https://gitlab.com/aeneria/aeneria-app) is to display ener
  * Better understand our own energy consumption
  * Analyse energy consumption throw weather data
 
- **Shipped version:** 1.0.4
+ **Shipped version:** 1.1.1
 
 ## Screenshots
 
