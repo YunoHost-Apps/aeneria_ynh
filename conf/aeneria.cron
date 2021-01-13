@@ -1,1 +1,1 @@
-0 1 * * * #USER# php7.3 #DESTDIR#/bin/console aeneria:fetch-data
+*/20 * * * * #USER# php7.3 #DESTDIR#/bin/console aeneria:fetch-data
