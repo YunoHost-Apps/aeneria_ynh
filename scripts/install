@@ -112,7 +112,7 @@ phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 #=================================================
 # CONFIGURE AENERIA
 #=================================================
-ynh_script_progression --message="Configuring æneria..." --weight=1
+ynh_script_progression --message="Configuring aeneria..." --weight=1
 
 aeneria_conf="$final_path/.env"
 cp ../conf/.env $aeneria_conf
@@ -128,7 +128,7 @@ chmod 600 "$aeneria_conf"
 #=================================================
 # INSTALL AENERIA
 #=================================================
-ynh_script_progression --message="Installing æneria..." --weight=1
+ynh_script_progression --message="Installing aeneria..." --weight=1
 
 # Set permissions to app files
 chown -R $app: $final_path

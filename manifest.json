@@ -1,5 +1,5 @@
 {
-    "name": "æneria",
+    "name": "aeneria",
     "id": "aeneria",
     "packaging_format": 1,
     "description": {
@@ -28,8 +28,8 @@
                 "name": "domain",
                 "type": "domain",
                 "ask": {
-                    "en": "Choose a domain for æneria",
-                    "fr": "Choisissez un domaine pour æneria"
+                    "en": "Choose a domain for aeneria",
+                    "fr": "Choisissez un domaine pour aeneria"
                 },
                 "example": "domain.org"
             },
@@ -37,8 +37,8 @@
                 "name": "path",
                 "type": "path",
                 "ask": {
-                    "en": "Choose a path for æneria",
-                    "fr": "Choisissez un chemin pour æneria"
+                    "en": "Choose a path for aeneria",
+                    "fr": "Choisissez un chemin pour aeneria"
                 },
                 "example": "/aeneria",
                 "default": "/aeneria"
@@ -60,8 +60,8 @@
                 "name": "admin",
                 "type": "user",
                 "ask": {
-                    "en": "Choose the æneria administrator",
-                    "fr": "Choisissez l'administrateur de æneria"
+                    "en": "Choose the aeneria administrator",
+                    "fr": "Choisissez l'administrateur de aeneria"
                 },
                 "example": "homer"
             }

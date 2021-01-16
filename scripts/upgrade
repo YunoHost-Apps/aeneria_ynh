@@ -138,7 +138,7 @@ ynh_add_fpm_config --usage=low --footprint=low --package="$extra_php_dependencie
 #=================================================
 # CONFIGURE AENERIA
 #=================================================
-ynh_script_progression --message="Configuring æneria..." --weight=1
+ynh_script_progression --message="Configuring aeneria..." --weight=1
 
 # Copy and set aeneria dist configuration
 aeneria_conf="$final_path/.env"
@@ -155,7 +155,7 @@ chmod 600 "$aeneria_conf"
 #=================================================
 # UPGRADE AENERIA
 #=================================================
-ynh_script_progression --message="Upgrading æneria..." --weight=1
+ynh_script_progression --message="Upgrading aeneria..." --weight=1
 
 # Set permissions on app files
 chown -R $app: $final_path
