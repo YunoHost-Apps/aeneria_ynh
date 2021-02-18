@@ -13,7 +13,7 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		upgrade=1	from_commit=25bf428e280f463fb85c3f8332b523415c56f816
+		upgrade=1	from_commit=45f0c70e9d96fa522cac82a210968a3e6379dd53
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=1
@@ -25,5 +25,5 @@
 Email=
 Notification=change
 ;;; Upgrade options
-	; commit=25bf428e280f463fb85c3f8332b523415c56f816
-		name=1.0.3
+	; commit=45f0c70e9d96fa522cac82a210968a3e6379dd53
+		name=1.1.2
