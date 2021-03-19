@@ -3,8 +3,8 @@
     "id": "aeneria",
     "packaging_format": 1,
     "description": {
-        "en": "A little dashboard to analyse your energy consumption data from Linky & weather",
-        "fr": "Un petit tableau de bord pour analyser votre consomation d'énergie à partir des données d'un Linky et de la météo"
+        "en": "Dashboard to analyse your energy consumption data from Linky & weather",
+        "fr": "Tableau de bord pour analyser votre consomation d'énergie à partir des données d'un Linky et de la météo"
     },
     "version": "1.1.3~ynh1",
     "url": "https://gitlab.com/aeneria/aeneria-app",
@@ -14,12 +14,12 @@
         "email": "bonjour@aeneria.com"
     },
     "requirements": {
-        "yunohost": ">= 3.7"
+        "yunohost": ">= 4.1.7"
     },
     "multi_instance": true,
     "services": [
         "nginx",
-        "php7.0-fpm",
+        "php7.3-fpm",
         "psql"
     ],
     "arguments": {
@@ -27,29 +27,17 @@
             {
                 "name": "domain",
                 "type": "domain",
-                "ask": {
-                    "en": "Choose a domain for aeneria",
-                    "fr": "Choisissez un domaine pour aeneria"
-                },
                 "example": "domain.org"
             },
             {
                 "name": "path",
                 "type": "path",
-                "ask": {
-                    "en": "Choose a path for aeneria",
-                    "fr": "Choisissez un chemin pour aeneria"
-                },
                 "example": "/aeneria",
                 "default": "/aeneria"
             },
             {
                 "name": "is_public",
                 "type": "boolean",
-                "ask": {
-                    "en": "Is it a public website?",
-                    "fr": "Est-ce un site public ?"
-                },
                 "help": {
                     "en": "Choose whether the app should be accessible only for your yunohost users or for everyone.",
                     "fr": "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs yunohost ou pour tout le monde."
@@ -59,10 +47,6 @@
             {
                 "name": "admin",
                 "type": "user",
-                "ask": {
-                    "en": "Choose the aeneria administrator",
-                    "fr": "Choisissez l'administrateur de aeneria"
-                },
                 "example": "homer"
             }
         ]

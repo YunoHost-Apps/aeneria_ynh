@@ -56,8 +56,7 @@ But don't worry, you can easilly transfer your data from Pilea to æneria follow
 
 ---
 
-Developer info
-----------------
+## Developer info
 
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/aeneria_ynh/tree/testing).
 
