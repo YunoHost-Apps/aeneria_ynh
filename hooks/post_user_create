@@ -3,7 +3,7 @@ app=APPNAMETOCHANGE
 
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
-source /etc/yunohost/apps/$app/scripts/ynh_exec_as
+source /etc/yunohost/apps/$app/scripts/_common.sh
 
 # Retrieve arguments
 username=$1

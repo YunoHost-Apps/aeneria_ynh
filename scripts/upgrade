@@ -16,13 +16,9 @@ ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
-# Ensure php version is set
-ynh_app_setting_set --app=$app --key=phpversion --value=$YNH_PHP_VERSION
-
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path_url)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
@@ -42,12 +38,6 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
 
-# Compatibility with previous version
-if [ -z "$path_url" ] ; then
-  path_url=$(ynh_app_setting_get --app="$app" --key=path)
-  ynh_app_setting_set --app=$app --key=path_url --value="$path_url"
-fi
-
 # If db_name doesn't exist, create it
 if [ -z "$db_name" ]; then
 	db_name=$(ynh_sanitize_dbid --db_name=$app)
@@ -58,6 +48,13 @@ fi
 if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+  ynh_legacy_permissions_delete_all
+
+  ynh_app_setting_delete --app=$app --key=is_public
 fi
 
 #=================================================
@@ -105,7 +102,7 @@ fi
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -128,7 +125,7 @@ ynh_system_user_create --username=$app
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading php-fpm configuration..." --weight=2
+ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=2
 
 # Create a dedicated php-fpm config
 ynh_add_fpm_config --usage=low --footprint=low --package="$extra_php_dependencies"
@@ -140,14 +137,9 @@ ynh_add_fpm_config --usage=low --footprint=low --package="$extra_php_dependencie
 #=================================================
 ynh_script_progression --message="Configuring aeneria..." --weight=1
 
-# Copy and set aeneria dist configuration
 aeneria_conf="$final_path/.env"
-cp ../conf/.env $aeneria_conf
 
-ynh_replace_string --match_string="database_name" --replace_string="${db_name}" --target_file="$aeneria_conf"
-ynh_replace_string --match_string="database_user" --replace_string="${db_user}" --target_file="$aeneria_conf"
-ynh_replace_string --match_string="database_password" --replace_string="${db_pwd}" --target_file="$aeneria_conf"
-ynh_replace_string --match_string="app_secret" --replace_string="${deskey}" --target_file="$aeneria_conf"
+ynh_add_config --template="../conf/.env" --destination="$aeneria_conf"
 
 # Restrict rights to aeneria user only
 chmod 600 "$aeneria_conf"
@@ -218,20 +210,9 @@ chown -R $app: $final_path
 chmod 755 $final_path
 
 #=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..."
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-  ynh_permission_update --permission "main" --add visitors
-fi
-
-#=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=1
+ynh_script_progression --message="ReloadingNGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
