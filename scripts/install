@@ -57,7 +57,15 @@ ynh_app_setting_set --app=$app --key=deskey --value=$deskey
 #=================================================
 ynh_script_progression --message="Installing dependencies..." --weight=1
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=1
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # CREATE A PSQL DATABASE
@@ -80,6 +88,10 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
@@ -87,14 +99,6 @@ ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=1
-
-# Create a system user
-ynh_system_user_create --username=$app
 
 #=================================================
 # PHP-FPM CONFIGURATION
@@ -124,10 +128,6 @@ chmod 600 "$aeneria_conf"
 #=================================================
 ynh_script_progression --message="Installing aeneria..." --weight=1
 
-# Set permissions to app files
-chown -R $app: $final_path
-chmod 755 $final_path
-
 # Install aeneria
 pushd $final_path
   ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
@@ -148,34 +148,22 @@ popd
 #=================================================
 # SET UP CRON JOB
 #=================================================
-ynh_script_progression --message="Setuping a cron job..." --weight=1
+ynh_script_progression --message="Setuping a cron..." --weight=1
 
-cron_path="/etc/cron.d/$app"
-cp -a ../conf/aeneria.cron "$cron_path"
-chown root: "$cron_path"
-chmod 644 "$cron_path"
-
-ynh_replace_string "#USER#" "$app" "$cron_path"
-ynh_replace_string "#DESTDIR#" "$final_path" "$cron_path"
+ynh_add_config --template="../conf/aeneria.cron" --destination="/etc/cron.d/$app"
+chown root: "/etc/cron.d/$app"
+chmod 644 "/etc/cron.d/$app"
 
 #=================================================
 # ADAPT HOOK FOR AENERIA INSTANCE
 #=================================================
 ynh_script_progression --message="Adapting hooks..." --weight=1
 
-ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_create"
-ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_delete"
+#ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_create"
+#ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_delete"
 
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..." --weight=1
-
-# Set permissions to app files
-chown -R $app: $final_path
-chmod 755 $final_path
+ynh_add_config --template="../hooks/post_user_create" --destination="../hooks/post_user_create"
+ynh_add_config --template="../hooks/post_user_create" --destination="../hooks/post_user_create"
 
 #=================================================
 # SETUP SSOWAT
