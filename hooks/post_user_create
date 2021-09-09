@@ -1,5 +1,5 @@
 #!/bin/bash
-app=__APP__
+app=APPNAMETOCHANGE
 
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
