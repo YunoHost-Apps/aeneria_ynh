@@ -19,19 +19,6 @@ extra_php_dependencies="php${YNH_PHP_VERSION}-zip php${YNH_PHP_VERSION}-pgsql ph
 # EXPERIMENTAL HELPERS
 #=================================================
 
-# Execute a command as another user
-# usage: exec_as USER COMMAND [ARG ...]
-ynh_exec_as() {
-  local USER=$1
-  shift 1
-
-  if [[ $USER = $(whoami) ]]; then
-    eval "$@"
-  else
-    sudo -u "$USER" "$@"
-  fi
-}
-
 # Check available space before creating a temp directory.
 #
 # usage: ynh_smart_mktemp --min_size="Min size"

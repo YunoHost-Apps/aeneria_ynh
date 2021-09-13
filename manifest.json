@@ -1,5 +1,5 @@
 {
-    "name": "aeneria",
+    "name": "æneria",
     "id": "aeneria",
     "packaging_format": 1,
     "description": {
@@ -14,7 +14,7 @@
         "email": "bonjour@aeneria.com"
     },
     "requirements": {
-        "yunohost": ">= 4.1.7"
+        "yunohost": ">= 4.2.4"
     },
     "multi_instance": true,
     "services": [
