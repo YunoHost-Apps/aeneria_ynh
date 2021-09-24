@@ -1,1 +1,1 @@
-*/20 * * * * #USER# php7.3 #DESTDIR#/bin/console aeneria:fetch-data
+*/20 * * * * __APP__ /usr/bin/php__PHPVERSION__ __FINALPATH__/bin/console aeneria:fetch-data

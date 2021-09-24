@@ -1,12 +1,12 @@
 {
-    "name": "aeneria",
+    "name": "æneria",
     "id": "aeneria",
     "packaging_format": 1,
     "description": {
         "en": "Dashboard to analyse your energy consumption data from Linky & weather",
         "fr": "Tableau de bord pour analyser votre consomation d'énergie à partir des données d'un Linky et de la météo"
     },
-    "version": "1.1.5~ynh1",
+    "version": "1.1.5~ynh2",
     "url": "https://gitlab.com/aeneria/aeneria-app",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -14,7 +14,7 @@
         "email": "bonjour@aeneria.com"
     },
     "requirements": {
-        "yunohost": ">= 4.1.7"
+        "yunohost": ">= 4.2.4"
     },
     "multi_instance": true,
     "services": [
