@@ -8,6 +8,12 @@
     },
     "version": "1.1.6~ynh2",
     "url": "https://gitlab.com/aeneria/aeneria-app",
+    "upstream": {
+        "license": "AGPL-3.0-or-later",
+        "website": "https://aeneria.com",
+        "admindoc": "https://docs.aeneria.com",
+        "code": "https://gitlab.com/aeneria/aeneria-app"
+    },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "Simon Mellerin",
@@ -23,7 +29,7 @@
         "psql"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"
@@ -35,6 +41,10 @@
                 "default": "/aeneria"
             },
             {
+                "name": "admin",
+                "type": "user"
+            },
+            {
                 "name": "is_public",
                 "type": "boolean",
                 "help": {
@@ -42,10 +52,6 @@
                     "fr": "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs yunohost ou pour tout le monde."
                 },
                 "default": false
-            },
-            {
-                "name": "admin",
-                "type": "user"
             }
         ]
     }
