@@ -96,7 +96,7 @@ chown -R $app:www-data "$final_path"
 #=================================================
 ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -104,7 +104,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 
-# Create a dedicated php-fpm config
+# Create a dedicated PHP-FPM config
 ynh_add_fpm_config --usage=low --footprint=low
 phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
@@ -129,19 +129,19 @@ ynh_script_progression --message="Installing aeneria..." --weight=1
 
 # Install aeneria
 pushd $final_path
-  ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
+	ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
 
-  # Create aeneria's user
-  for username in $(ynh_user_list)
-  do
-    mail=$(ynh_user_get_info --username=$username --key='mail')
-    user_pass=$(ynh_string_random)
-    ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass"
-  done
+	# Create aeneria's user
+	for username in $(ynh_user_list)
+	do
+		mail=$(ynh_user_get_info --username=$username --key='mail')
+		user_pass=$(ynh_string_random)
+		ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass"
+	done
 
-  # Set admin user
-  mail=$(ynh_user_get_info --username=$admin --key='mail')
-  ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
+	# Set admin user
+	mail=$(ynh_user_get_info --username=$admin --key='mail')
+	ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
 popd
 
 #=================================================
@@ -169,7 +169,7 @@ ynh_script_progression --message="Configuring permissions..." --weight=1
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-  ynh_permission_update --permission="main" --add="visitors"
+	ynh_permission_update --permission="main" --add="visitors"
 fi
 
 #=================================================
