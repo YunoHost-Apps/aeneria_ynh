@@ -25,6 +25,8 @@ phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 deskey=$(ynh_app_setting_get --app=$app --key=deskey)
 db_user="$db_name"
+hour=$(ynh_app_setting_get --app=$app --key=hour)
+minutes=$(ynh_app_setting_get --app=$app --key=minutes)
 
 #=================================================
 # CHECK VERSION
@@ -64,6 +66,12 @@ fi
 if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+# If minutes or hour do not exist, create them
+if [ -z "$minutes" ] || [ -z "$hour" ]; then
+	# Generate random running schedule, and save $hour and $minutes as app parameters
+	generate_random_minutes_hour
 fi
 
 # Cleaning legacy permissions
