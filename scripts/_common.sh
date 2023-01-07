@@ -15,7 +15,11 @@ pkg_dependencies="apt-transport-https postgresql postgresql-contrib php${YNH_PHP
 # Assign two variables:
 #   minutes: random value between 00 and 59 (MM)
 #   hour: random value between 0 and 2
-# It is used for the cronjob, so that it runs every 3 hours starting at 00:MM, 01:MM, or 02:MM.
+# To avoid peak load on proxy.aeneria.com, we randomize when the cron job will be launched
+# Assign two variables:
+#   minutes: random value between 00 and 59 (MM)
+#   hour: random value between 0 and 2
+# These two variables are used in conf/aeneria.cron so that it runs every 3 hours starting at 00:MM, 01:MM, or 02:MM.
 generate_random_minutes_hour () {
 	minutes="$(ynh_string_random --length=1 --filter=0-5)$(ynh_string_random --length=1 --filter=0-9)"
 	hour="$(ynh_string_random --length=1 --filter=0-2)"
