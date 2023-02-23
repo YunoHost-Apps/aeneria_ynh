@@ -5,15 +5,16 @@ It shall NOT be edited by hand.
 
 # æneria pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/aeneria.svg)](https://dash.yunohost.org/appci/app/aeneria) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/aeneria.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/aeneria.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/aeneria.svg)](https://dash.yunohost.org/appci/app/aeneria) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/aeneria.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/aeneria.maintain.svg)
+
 [![Installer æneria avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=aeneria)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer æneria rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer æneria rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 The idea of [æneria](https://aeneria.com) is to display energy consumption and weather data on a little dashboard that allow the user to:
 
@@ -23,9 +24,9 @@ The idea of [æneria](https://aeneria.com) is to display energy consumption and 
 
 **Version incluse :** 1.1.6~ynh2
 
-## Captures d'écran
+## Captures d’écran
 
-![Capture d'écran de æneria](./doc/screenshots/screenshot1.png)
+![Capture d’écran de æneria](./doc/screenshots/screenshot1.png)
 
 ## Avertissements / informations importantes
 
@@ -46,9 +47,9 @@ But don't worry, you can easilly transfer your data from Pilea to æneria follow
 
 ## Documentations et ressources
 
-* Site officiel de l'app : <https://aeneria.com>
-* Documentation officielle de l'admin : <https://docs.aeneria.com>
-* Dépôt de code officiel de l'app : <https://gitlab.com/aeneria/aeneria-app>
+* Site officiel de l’app : <https://aeneria.com>
+* Documentation officielle de l’admin : <https://docs.aeneria.com>
+* Dépôt de code officiel de l’app : <https://gitlab.com/aeneria/aeneria-app>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_aeneria>
 * Signaler un bug : <https://github.com/YunoHost-Apps/aeneria_ynh/issues>
 
@@ -64,4 +65,4 @@ ou
 sudo yunohost app upgrade aeneria -u https://github.com/YunoHost-Apps/aeneria_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
