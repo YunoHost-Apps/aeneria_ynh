@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # æneria for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/aeneria.svg)](https://dash.yunohost.org/appci/app/aeneria) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/aeneria.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/aeneria.svg)](https://dash.yunohost.org/appci/app/aeneria) ![Working status](https://ci-apps.yunohost.org/ci/badges/aeneria.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/aeneria.maintain.svg)  
 [![Install æneria with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=aeneria)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -23,11 +23,9 @@ The idea of [æneria](https://aeneria.com) is to display energy consumption and 
 
 **Shipped version:** 1.1.6~ynh2
 
-
-
 ## Screenshots
 
-![](./doc/screenshots/screenshot1.png)
+![Screenshot of æneria](./doc/screenshots/screenshot1.png)
 
 ## Disclaimers / important information
 
@@ -48,21 +46,22 @@ But don't worry, you can easilly transfer your data from Pilea to æneria follow
 
 ## Documentation and resources
 
-* Official app website: https://aeneria.com
-* Official admin documentation: https://docs.aeneria.com
-* Upstream app code repository: https://gitlab.com/aeneria/aeneria-app
-* YunoHost documentation for this app: https://yunohost.org/app_aeneria
-* Report a bug: https://github.com/YunoHost-Apps/aeneria_ynh/issues
+* Official app website: <https://aeneria.com>
+* Official admin documentation: <https://docs.aeneria.com>
+* Upstream app code repository: <https://gitlab.com/aeneria/aeneria-app>
+* YunoHost documentation for this app: <https://yunohost.org/app_aeneria>
+* Report a bug: <https://github.com/YunoHost-Apps/aeneria_ynh/issues>
 
 ## Developer info
 
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/aeneria_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
-```
+
+``` bash
 sudo yunohost app install https://github.com/YunoHost-Apps/aeneria_ynh/tree/testing --debug
 or
 sudo yunohost app upgrade aeneria -u https://github.com/YunoHost-Apps/aeneria_ynh/tree/testing --debug
 ```
 
-**More info regarding app packaging:** https://yunohost.org/packaging_apps
+**More info regarding app packaging:** <https://yunohost.org/packaging_apps>
