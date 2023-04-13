@@ -1,1 +1,2 @@
 __MINUTES__ __HOUR__-23/3 * * * __APP__ /usr/bin/php__PHPVERSION__ __FINALPATH__/bin/console aeneria:fetch-data
+*/15 * * * * __APP__ /usr/bin/php__PHPVERSION__ __FINALPATH__/bin/console aeneria:pending-action:process-expired
