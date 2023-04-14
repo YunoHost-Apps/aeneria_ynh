@@ -149,6 +149,9 @@ popd
 #=================================================
 ynh_script_progression --message="Setuping a cron..." --weight=1
 
+# Generate random running schedule, and save $hour and $minutes as app parameters
+generate_random_minutes_hour
+
 ynh_add_config --template="../conf/aeneria.cron" --destination="/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
 chmod 644 "/etc/cron.d/$app"
