@@ -1,0 +1,28 @@
+#!/bin/bash
+app=$1
+
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+source /etc/yunohost/apps/$app/scripts/_common.sh
+
+# Retrieve arguments
+usernames=$2
+permission=$3
+groups=$4
+final_path=$(ynh_app_setting_get "$app" final_path)
+phpversion=$(ynh_app_setting_get "$app" phpversion)
+
+IFS=',' read -r -a user_list <<< "$usernames"
+IFS=',' read -r -a group_list <<< "$groups"
+
+for group in "${group_list[@]}"
+do
+    group_array=$(yunohost user group list --output-as json --quiet | jq -r --arg group "$group" ".groups.$group.members | .[]")
+    user_list+=("${group_array[@]}")
+done
+
+for user in "${user_list[@]}"
+do
+    mail=$(ynh_user_get_info --username="$user" --key=mail)
+    cd "$final_path" && ynh_exec_as $app php$phpversion bin/console aeneria:user:deactivate "$mail" -n
+done

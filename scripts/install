@@ -131,16 +131,9 @@ ynh_script_progression --message="Installing aeneria..." --weight=1
 pushd $final_path
 	ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
 
-	# Create aeneria's user
-	for username in $(ynh_user_list)
-	do
-		mail=$(ynh_user_get_info --username=$username --key='mail')
-		user_pass=$(ynh_string_random)
-		ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass"
-	done
-
-	# Set admin user
-	mail=$(ynh_user_get_info --username=$admin --key='mail')
+	# Create admin user
+	mail=$(ynh_user_get_info --username="$admin" --key='mail')
+	ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$(ynh_string_random)" -n
 	ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
 popd
 
@@ -155,14 +148,6 @@ generate_random_minutes_hour
 ynh_add_config --template="../conf/aeneria.cron" --destination="/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
 chmod 644 "/etc/cron.d/$app"
-
-#=================================================
-# ADAPT HOOK FOR AENERIA INSTANCE
-#=================================================
-ynh_script_progression --message="Adapting hooks..." --weight=1
-
-ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_create"
-ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string="$app" --target_file="../hooks/post_user_delete"
 
 #=================================================
 # SETUP SSOWAT

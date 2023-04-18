@@ -166,21 +166,14 @@ pushd $final_path
 	ynh_exec_as $app php$phpversion bin/console cache:clear -n
 	ynh_exec_as $app php$phpversion bin/console doctrine:migrations:migrate -n
 
-	# Create aeneria's user
-	for username in $(ynh_user_list)
-	do
-		mail=$(ynh_user_get_info --username=$username --key='mail')
-		user_exists=$(ynh_exec_as $app php$phpversion bin/console aeneria:user:exist "$mail")
-		if [ $user_exists -eq 0 ]
-		then
-			user_pass=$(ynh_string_random)
-			ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass" -n
-		fi
-	done
-
 	# Set admin user
-	mail=$(ynh_user_get_info --username=$admin --key='mail')
-	ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail" -n
+	mail=$(ynh_user_get_info --username="$admin" --key='mail')
+	user_exists=$(ynh_exec_as $app php$phpversion bin/console aeneria:user:exist "$mail")
+	if [ $user_exists -eq 0 ]
+	then
+		user_pass=$(ynh_string_random)
+		ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass" -n
+	fi
 
 	# Regenerate RSA keys
 	ynh_exec_as $app php$phpversion bin/console aeneria:generate-key --force -n
@@ -194,14 +187,6 @@ ynh_script_progression --message="Setuping a cron job..." --weight=1
 ynh_add_config --template="../conf/aeneria.cron" --destination="/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
 chmod 644 "/etc/cron.d/$app"
-
-#=================================================
-# ADAPT HOOK FOR AENERIA INSTANCE
-#=================================================
-ynh_script_progression --message="Adapting hooks..." --weight=1
-
-ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string=$app --target_file="../hooks/post_user_create"
-ynh_replace_string --match_string="APPNAMETOCHANGE" --replace_string=$app --target_file="../hooks/post_user_delete"
 
 #=================================================
 # RELOAD NGINX
