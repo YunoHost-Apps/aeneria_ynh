@@ -1,6 +1,9 @@
 #!/bin/bash
 app=$1
 
+# Run only if we are altering aeneria's permissions
+[[ "$app" != "__APP__" ]] && exit 0
+
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 source /etc/yunohost/apps/$app/scripts/_common.sh
