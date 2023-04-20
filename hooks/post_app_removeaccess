@@ -20,7 +20,8 @@ IFS=',' read -r -a group_list <<< "$groups"
 
 for group in "${group_list[@]}"
 do
-    group_array=$(yunohost user group list --output-as json --quiet | jq -r --arg group "$group" ".groups.$group.members | .[]")
+    group_array=$(yunohost user group list --output-as json --quiet | jq -r --arg group "$group" ".groups.$group.members | @csv" | tr -d \")
+    IFS=',' read -r -a group_array <<< "$group_array"
     user_list+=("${group_array[@]}")
 done
 
