@@ -1,0 +1,41 @@
+#!/bin/bash
+app=$1
+
+# Run only if we are altering aeneria's permissions
+[[ "$app" != "__APP__" ]] && exit 0
+
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+source /etc/yunohost/apps/$app/scripts/_common.sh
+
+# Retrieve arguments
+usernames=$2
+permission=$3
+groups=$4
+final_path=$(ynh_app_setting_get "$app" final_path)
+phpversion=$(ynh_app_setting_get "$app" phpversion)
+
+IFS=',' read -r -a user_list <<< "$usernames"
+IFS=',' read -r -a group_list <<< "$groups"
+
+for group in "${group_list[@]}"
+do
+    group_array=$(yunohost user group list --output-as json --quiet | jq -r --arg group "$group" ".groups.$group.members | @csv" | tr -d \")
+    IFS=',' read -r -a group_array <<< "$group_array"
+    user_list+=("${group_array[@]}")
+done
+
+pushd $final_path
+    for user in "${user_list[@]}"
+    do
+        mail=$(ynh_user_get_info --username="$user" --key=mail)
+        user_exists=$(ynh_exec_as $app php$phpversion bin/console aeneria:user:exist "$mail")
+        if [ $user_exists -eq 0 ]
+        then
+            user_pass=$(ynh_string_random)
+            ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass" -n
+        else
+            ynh_exec_as $app php$phpversion bin/console aeneria:user:activate "$mail"
+        fi
+    done
+popd
