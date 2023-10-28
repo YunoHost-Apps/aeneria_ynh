@@ -12,21 +12,21 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
+#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=1
 
-app=$YNH_APP_INSTANCE_NAME
+#REMOVEME? app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-admin=$(ynh_app_setting_get --app=$app --key=admin)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
-db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-deskey=$(ynh_app_setting_get --app=$app --key=deskey)
-db_user="$db_name"
-hour=$(ynh_app_setting_get --app=$app --key=hour)
-minutes=$(ynh_app_setting_get --app=$app --key=minutes)
+#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
+#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
+#REMOVEME? admin=$(ynh_app_setting_get --app=$app --key=admin)
+#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
+#REMOVEME? db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+#REMOVEME? phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+#REMOVEME? db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+#REMOVEME? deskey=$(ynh_app_setting_get --app=$app --key=deskey)
+#REMOVEME? db_user="$db_name"
+#REMOVEME? hour=$(ynh_app_setting_get --app=$app --key=hour)
+#REMOVEME? minutes=$(ynh_app_setting_get --app=$app --key=minutes)
 
 #=================================================
 # CHECK VERSION
@@ -38,16 +38,16 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
+#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
 
 # Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
+#REMOVEME? ynh_backup_before_upgrade
+#REMOVEME? ynh_clean_setup () {
 	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
+#REMOVEME? 	ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -59,13 +59,13 @@ ynh_script_progression --message="Ensuring downward compatibility..."
 # If db_name doesn't exist, create it
 if [ -z "$db_name" ]; then
 	db_name=$(ynh_sanitize_dbid --db_name=$app)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+#REMOVEME? 	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 fi
 
-# If final_path doesn't exist, create it
-if [ -z "$final_path" ]; then
-	final_path=/var/www/$app
-	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# If install_dir doesn't exist, create it
+if [ -z "$install_dir" ]; then
+#REMOVEME? 	install_dir=/var/www/$app
+#REMOVEME? 	ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
 fi
 
 # If minutes or hour do not exist, create them
@@ -75,8 +75,8 @@ if [ -z "$minutes" ] || [ -z "$hour" ]; then
 fi
 
 # Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-	ynh_legacy_permissions_delete_all
+#REMOVEME? if ynh_legacy_permissions_exists; then
+#REMOVEME? 	ynh_legacy_permissions_delete_all
 
 	ynh_app_setting_delete --app=$app --key=is_public
 fi
@@ -84,10 +84,10 @@ fi
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
+#REMOVEME? ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -110,14 +110,14 @@ then
 	ynh_setup_source --dest_dir="$tmpdir"
 
 	# Replace the old aeneria by the new one
-	ynh_secure_remove --file="$final_path"
-	mv "$tmpdir" "$final_path"
+#REMOVEME? 	ynh_secure_remove --file="$install_dir"
+	mv "$tmpdir" "$install_dir"
 	ynh_secure_remove --file="$tmpdir"
 fi
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -130,9 +130,9 @@ ynh_add_nginx_config
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=1
+#REMOVEME? ynh_script_progression --message="Upgrading dependencies..." --weight=1
 
-ynh_exec_warn_less ynh_install_app_dependencies "$pkg_dependencies"
+#REMOVEME? ynh_exec_warn_less ynh_install_app_dependencies "$pkg_dependencies"
 
 #=================================================
 # PHP-FPM CONFIGURATION
@@ -149,7 +149,7 @@ ynh_add_fpm_config --usage=low --footprint=low
 #=================================================
 ynh_script_progression --message="Configuring aeneria..." --weight=1
 
-aeneria_conf="$final_path/.env"
+aeneria_conf="$install_dir/.env"
 
 ynh_add_config --template="../conf/.env" --destination="$aeneria_conf"
 
@@ -162,7 +162,7 @@ chmod 600 "$aeneria_conf"
 ynh_script_progression --message="Upgrading aeneria..." --weight=1
 
 # Install dependencies and aeneria
-pushd $final_path
+pushd $install_dir
 	ynh_exec_as $app php$phpversion bin/console cache:clear -n
 	ynh_exec_as $app php$phpversion bin/console doctrine:migrations:migrate -n
 
@@ -199,9 +199,9 @@ ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_fil
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
-ynh_systemd_action --service_name=nginx --action=reload
+#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
