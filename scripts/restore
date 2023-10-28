@@ -37,9 +37,6 @@ ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
-# Recreate a dedicated php-fpm config
-ynh_add_fpm_config
-
 ynh_restore_file --origin_path="/etc/cron.d/$app"
 
 #=================================================

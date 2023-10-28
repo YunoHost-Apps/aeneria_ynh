@@ -23,7 +23,7 @@ upgrade_type=$(ynh_check_app_version_changed)
 ynh_script_progression --message="Ensuring downward compatibility..."
 
 # If minutes or hour do not exist, create them
-if [ -z "${minutes:-}" ] || [ -z "$hour" ]; then
+if [ -z "${minutes:-}" ] || [ -z "${hour:-}" ]; then
 	# Generate random running schedule, and save $hour and $minutes as app parameters
 	generate_random_minutes_hour
 fi
@@ -68,7 +68,7 @@ ynh_add_nginx_config
 # Create a dedicated PHP-FPM config
 ynh_add_fpm_config
 
-ynh_add_config --template="../conf/aeneria.cron" --destination="/etc/cron.d/$app"
+ynh_add_config --template="aeneria.cron" --destination="/etc/cron.d/$app"
 chown root: "/etc/cron.d/$app"
 chmod 644 "/etc/cron.d/$app"
 
@@ -77,7 +77,7 @@ chmod 644 "/etc/cron.d/$app"
 #=================================================
 # CONFIGURE AENERIA
 #=================================================
-ynh_script_progression --message="Configuring aeneria..." --weight=1
+ynh_script_progression --message="Configuring $app..." --weight=1
 
 ynh_add_config --template=".env" --destination="$install_dir/.env"
 
@@ -87,7 +87,7 @@ chmod 600 "$install_dir/.env"
 #=================================================
 # UPGRADE AENERIA
 #=================================================
-ynh_script_progression --message="Upgrading aeneria..." --weight=1
+ynh_script_progression --message="Upgrading $app..." --weight=1
 
 # Install dependencies and aeneria
 pushd $install_dir
