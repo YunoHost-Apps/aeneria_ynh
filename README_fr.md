@@ -50,7 +50,7 @@ But don't worry, you can easilly transfer your data from Pilea to æneria follow
 * Site officiel de l’app : <https://aeneria.com>
 * Documentation officielle de l’admin : <https://docs.aeneria.com>
 * Dépôt de code officiel de l’app : <https://gitlab.com/aeneria/aeneria-app>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_aeneria>
+* YunoHost Store: <https://apps.yunohost.org/app/aeneria>
 * Signaler un bug : <https://github.com/YunoHost-Apps/aeneria_ynh/issues>
 
 ## Informations pour les développeurs
