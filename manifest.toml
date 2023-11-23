@@ -5,7 +5,7 @@ name = "æneria"
 description.en = "Dashboard to analyse your energy consumption data from Linky & weather"
 description.fr = "Tableau de bord pour analyser votre consomation d'énergie à partir des données d'un Linky et de la météo"
 
-version = "1.1.6~ynh4"
+version = "1.1.6~ynh5"
 
 maintainers = ["Simon Mellerin"]
 
