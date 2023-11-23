@@ -21,7 +21,7 @@ L'idée de [æneria](https://aeneria.com) est d'afficher la consommation d'éner
   * Mieux comprendre sa propre consommation d'énergie
   * Analyser la consommation d'énergie et les données météorologiques
 
-**Version incluse :** 1.1.6~ynh4
+**Version incluse :** 1.1.6~ynh5
 
 ## Captures d’écran
 
