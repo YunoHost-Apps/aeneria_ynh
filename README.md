@@ -28,29 +28,12 @@ The idea of [æneria](https://aeneria.com) is to display energy consumption and 
 
 ![Screenshot of æneria](./doc/screenshots/screenshot1.png)
 
-## Disclaimers / important information
-
-## Configuration
-
-* First of all, you'll need a Linky and an [Enedis account](https://mon-compte-client.enedis.fr/)
-* In your Enedis space, go to ["Gérer l'accès à mes données"](https://mon-compte-particulier.enedis.fr/donnees/) tab, and allow Enedis to collect and store your hourly consumption
-* After that, install æneria to your Yunohost instance, visit it and just follow instructions
-* That's it, now wait a bit to see data appear !
-
-## Comming from Pilea
-
-æneria is the new name of Pilea. This new name came whith a brand new version.
-
-This new version introduced some breaking changes in data structure: migration from Pilea can't be done automaticly.
-
-But don't worry, you can easilly transfer your data from Pilea to æneria following [this documentation](https://docs.aeneria.com/fr/latest/administrateur/pilea_migration.html).
-
 ## Documentation and resources
 
 * Official app website: <https://aeneria.com>
 * Official admin documentation: <https://docs.aeneria.com>
 * Upstream app code repository: <https://gitlab.com/aeneria/aeneria-app>
-* YunoHost documentation for this app: <https://yunohost.org/app_aeneria>
+* YunoHost Store: <https://apps.yunohost.org/app/aeneria>
 * Report a bug: <https://github.com/YunoHost-Apps/aeneria_ynh/issues>
 
 ## Developer info

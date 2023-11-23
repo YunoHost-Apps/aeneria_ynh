@@ -28,9 +28,9 @@ chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
 
 #=================================================
-# NGINX CONFIGURATION
+# SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=1
+ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
@@ -43,9 +43,9 @@ ynh_add_fpm_config
 #=================================================
 # CONFIGURE AENERIA
 #=================================================
-ynh_script_progression --message="Configuring aeneria..." --weight=1
+ynh_script_progression --message="Configuring $app..." --weight=1
 
-ynh_add_config --template="../conf/.env" --destination="$install_dir/.env"
+ynh_add_config --template=".env" --destination="$install_dir/.env"
 
 # Restrict rights to aeneria user only
 chmod 600 "$install_dir/.env"
