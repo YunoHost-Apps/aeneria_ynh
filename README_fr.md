@@ -16,13 +16,12 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 
 ## Vue d’ensemble
 
-The idea of [æneria](https://aeneria.com) is to display energy consumption and weather data on a little dashboard that allow the user to:
+L'idée de [æneria](https://aeneria.com) est d'afficher la consommation d'énergie et les données météorologiques sur un petit tableau de bord qui permet à l'utilisateur de :
 
- * Better understand our own energy consumption
- * Analyse energy consumption throw weather data
+  * Mieux comprendre sa propre consommation d'énergie
+  * Analyser la consommation d'énergie et les données météorologiques
 
-
-**Version incluse :** 1.1.6~ynh4
+**Version incluse :** 1.1.6~ynh5
 
 ## Captures d’écran
 
