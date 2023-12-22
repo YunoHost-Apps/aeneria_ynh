@@ -25,7 +25,7 @@ L'idée de [æneria](https://aeneria.com) est d'afficher la consommation d'éner
 
 ## Captures d’écran
 
-![Capture d’écran de æneria](./doc/screenshots/screenshot1.png)
+![Capture d’écran de æneria](./doc/screenshots/preview-1.png)
 
 ## Documentations et ressources
 

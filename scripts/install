@@ -45,10 +45,10 @@ ynh_add_fpm_config
 #=================================================
 ynh_script_progression --message="Configuring $app..." --weight=1
 
-ynh_add_config --template=".env" --destination="$install_dir/.env"
+ynh_add_config --template=".env" --destination="$install_dir/app/.env"
 
 # Restrict rights to aeneria user only
-chmod 600 "$install_dir/.env"
+chmod 600 "$install_dir/app/.env"
 
 #=================================================
 # INSTALL AENERIA
@@ -56,7 +56,7 @@ chmod 600 "$install_dir/.env"
 ynh_script_progression --message="Installing aeneria..." --weight=1
 
 # Install aeneria
-pushd $install_dir
+pushd $install_dir/app
 	ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
 	# Create admin user
 	mail=$(ynh_user_get_info --username="$admin" --key='mail')

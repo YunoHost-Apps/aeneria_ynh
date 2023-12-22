@@ -1,12 +1,14 @@
-commit c7a763a0fae7e1933f280b29bd2a1911b01f7170
+commit 19648694faaf973e7b4b0de1dbe49710e14a8ce7
 Author: Simon Mellerin <simon.mellerin@makina-corpus.com>
-Date:   Fri Nov 27 12:19:02 2020 +0100
+Date:   Fri Dec 22 17:22:41 2023 +0100
 
-diff --git a/config/packages/security.yaml b/config/packages/security.yaml
-index 15ef608..8516775 100644
---- a/config/packages/security.yaml
-+++ b/config/packages/security.yaml
-@@ -10,6 +10,8 @@ security:
+    Yunohost ldap
+
+diff --git a/app/config/packages/security.yaml b/app/config/packages/security.yaml
+index 6c4457f1..ea1f3dc9 100644
+--- a/app/config/packages/security.yaml
++++ b/app/config/packages/security.yaml
+@@ -11,6 +11,8 @@ security:
              entity:
                  class: App\Entity\User
                  property: username
@@ -15,10 +17,10 @@ index 15ef608..8516775 100644
      firewalls:
          dev:
              pattern: ^/(_(profiler|wdt)|css|images|js)/
-@@ -20,6 +22,10 @@ security:
-                 provider: app_user_provider
-                 authenticators:
-                     - App\Security\LoginFormAuthenticator
+@@ -23,6 +25,10 @@ security:
+                 login_path: security.login
+                 check_path: security.login
+                 enable_csrf: true
 +            http_basic_ldap:
 +                provider: user_provider_yunohost
 +                service: yunohost.ldap
@@ -26,14 +28,14 @@ index 15ef608..8516775 100644
              logout:
                  path: security.logout
                  target: security.login
-diff --git a/config/services.yaml b/config/services.yaml
-index 533c244..9362ef5 100644
---- a/config/services.yaml
-+++ b/config/services.yaml
-@@ -70,3 +70,16 @@ services:
+diff --git a/app/config/services.yaml b/app/config/services.yaml
+index 4410bfc5..71b9ba86 100644
+--- a/app/config/services.yaml
++++ b/app/config/services.yaml
+@@ -105,3 +105,16 @@ services:
 
-     Aeneria\EnedisDataConnectApi\Service\DataConnectServiceInterface:
-         alias: Aeneria\EnedisDataConnectApi\Service\DataConnectService
+     Aeneria\GrdfAdictApi\Client\GrdfAdictClientInterface:
+         alias: Aeneria\GrdfAdictApi\Client\GrdfAdictClient
 +
 +    yunohost.provider.ldap:
 +        class: App\Security\YunohostLdapUserProvider
@@ -47,13 +49,15 @@ index 533c244..9362ef5 100644
 +        class: Symfony\Component\Ldap\Adapter\ExtLdap\Adapter
 +        arguments:
 +            - host: "localhost"
-diff --git a/src/Security/YunohostLdapUserProvider.php b/src/Security/YunohostLdapUserProvider.php
+diff --git a/app/src/Security/YunohostLdapUserProvider.php b/app/src/Security/YunohostLdapUserProvider.php
 new file mode 100644
-index 0000000..39ba1e8
+index 00000000..09ad20c6
 --- /dev/null
-+++ b/src/Security/YunohostLdapUserProvider.php
-@@ -0,0 +1,123 @@
++++ b/app/src/Security/YunohostLdapUserProvider.php
+@@ -0,0 +1,102 @@
 +<?php
++
++declare(strict_types=1);
 +
 +namespace App\Security;
 +
@@ -64,85 +68,62 @@ index 0000000..39ba1e8
 +use Symfony\Component\Ldap\LdapInterface;
 +use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 +use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
++use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 +use Symfony\Component\Security\Core\User\UserInterface;
 +use Symfony\Component\Security\Core\User\UserProviderInterface;
 +
 +/**
 + * Adapted from LdapUserProvider.
 + *
-+ * @author Grégoire Pineau <lyrixx@lyrixx.info>
-+ * @author Charles Sarrazin <charles@sarraz.in>
-+ * @author Robin Chalas <robin.chalas@gmail.com>
 + */
 +class YunohostLdapUserProvider implements UserProviderInterface
 +{
-+    /** @var LdapInterface */
-+    private $ldap;
-+    /** @var string */
-+    private $baseDn;
-+    /** @var string */
-+    private $searchDn;
-+    /** @var string */
-+    private $searchPassword;
-+    /** @var string[] */
-+    private $defaultRoles;
-+    /** @var string */
-+    private $uidKey;
-+    /** @var string */
-+    private $defaultSearch;
-+    /** @var UserRepository */
-+    private $userRepository;
++    private string $defaultSearch = '(uid={username})';
 +
 +    public function __construct(
-+        LdapInterface $ldap,
-+        string $baseDn,
-+        string $searchDn = null,
-+        string $searchPassword = null,
-+        array $defaultRoles = [],
-+        UserRepository $userRepository
-+    ) {
-+        $this->ldap = $ldap;
-+        $this->baseDn = $baseDn;
-+        $this->searchDn = $searchDn;
-+        $this->searchPassword = $searchPassword;
-+        $this->defaultRoles = $defaultRoles;
-+        $this->defaultSearch = '(uid={username})';
-+
-+        $this->userRepository = $userRepository;
-+    }
++        private LdapInterface $ldap,
++        private string $baseDn,
++        private UserRepository $userRepository,
++        private ?string $searchDn = null,
++        private ?string $searchPassword = null,
++    ) {}
 +
 +    /**
 +     * {@inheritdoc}
 +     */
 +    public function loadUserByUsername(string $username)
 +    {
++        trigger_deprecation('symfony/security-core', '5.3', 'Method "%s()" is deprecated, use loadUserByIdentifier() instead.', __METHOD__);
++
++        return $this->loadUserByIdentifier($username);
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function loadUserByIdentifier(string $identifier): UserInterface
++    {
 +        try {
 +            $this->ldap->bind($this->searchDn, $this->searchPassword);
-+            $username = $this->ldap->escape($username, '', LdapInterface::ESCAPE_FILTER);
-+            $query = str_replace('{username}', $username, $this->defaultSearch);
++            $username = $this->ldap->escape($identifier, '', LdapInterface::ESCAPE_FILTER);
++            $query = str_replace('{username}', $identifier, $this->defaultSearch);
 +            $search = $this->ldap->query($this->baseDn, $query);
 +        } catch (ConnectionException $e) {
-+            throw new UsernameNotFoundException(sprintf('User "%s" not found.', $username), 0, $e);
++            throw new UserNotFoundException(sprintf('User "%s" not found.', $identifier), 0, $e);
 +        }
 +
 +        $entries = $search->execute();
 +        $count = \count($entries);
 +
-+        if (!$count) {
-+            die($username . 'ldap pas trouvé');
-+            throw new UsernameNotFoundException(sprintf('User "%s" not found.', $username));
-+        }
-+
 +        if ($count > 1) {
-+            throw new UsernameNotFoundException('More than one user found.');
++            throw new UserNotFoundException('More than one user found.');
 +        }
 +
 +        $entry = $entries[0];
 +
-+        $username = $this->getAttributeValue($entry, 'mail');
++        $identifier = $this->getAttributeValue($entry, 'mail');
 +
-+        return $this->userRepository->findOneBy(['username' => $username]);
++        return $this->userRepository->findOneBy(['username' => $identifier]);
 +    }
 +
 +    /**
@@ -176,4 +157,3 @@ index 0000000..39ba1e8
 +        return $values[0];
 +    }
 +}
---
