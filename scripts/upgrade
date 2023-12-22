@@ -79,10 +79,10 @@ chmod 644 "/etc/cron.d/$app"
 #=================================================
 ynh_script_progression --message="Configuring $app..." --weight=1
 
-ynh_add_config --template=".env" --destination="$install_dir/app/.env"
+ynh_add_config --template=".env" --destination="$install_dir/.env"
 
 # Restrict rights to aeneria user only
-chmod 600 "$install_dir/app/.env"
+chmod 600 "$install_dir/.env"
 
 #=================================================
 # UPGRADE AENERIA
@@ -90,7 +90,7 @@ chmod 600 "$install_dir/app/.env"
 ynh_script_progression --message="Upgrading $app..." --weight=1
 
 # Install dependencies and aeneria
-pushd $install_dir/app
+pushd $install_dir
 	ynh_exec_as $app php$phpversion bin/console cache:clear -n
 	ynh_exec_as $app php$phpversion bin/console doctrine:migrations:migrate -n
 

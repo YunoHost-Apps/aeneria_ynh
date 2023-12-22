@@ -4,10 +4,10 @@ Date:   Fri Dec 22 17:22:41 2023 +0100
 
     Yunohost ldap
 
-diff --git a/app/config/packages/security.yaml b/app/config/packages/security.yaml
+diff --git a/config/packages/security.yaml b/config/packages/security.yaml
 index 6c4457f1..ea1f3dc9 100644
---- a/app/config/packages/security.yaml
-+++ b/app/config/packages/security.yaml
+--- a/config/packages/security.yaml
++++ b/config/packages/security.yaml
 @@ -11,6 +11,8 @@ security:
              entity:
                  class: App\Entity\User
@@ -28,10 +28,10 @@ index 6c4457f1..ea1f3dc9 100644
              logout:
                  path: security.logout
                  target: security.login
-diff --git a/app/config/services.yaml b/app/config/services.yaml
+diff --git a/config/services.yaml b/config/services.yaml
 index 4410bfc5..71b9ba86 100644
---- a/app/config/services.yaml
-+++ b/app/config/services.yaml
+--- a/config/services.yaml
++++ b/config/services.yaml
 @@ -105,3 +105,16 @@ services:
 
      Aeneria\GrdfAdictApi\Client\GrdfAdictClientInterface:
@@ -49,11 +49,11 @@ index 4410bfc5..71b9ba86 100644
 +        class: Symfony\Component\Ldap\Adapter\ExtLdap\Adapter
 +        arguments:
 +            - host: "localhost"
-diff --git a/app/src/Security/YunohostLdapUserProvider.php b/app/src/Security/YunohostLdapUserProvider.php
+diff --git a/src/Security/YunohostLdapUserProvider.php b/src/Security/YunohostLdapUserProvider.php
 new file mode 100644
 index 00000000..09ad20c6
 --- /dev/null
-+++ b/app/src/Security/YunohostLdapUserProvider.php
++++ b/src/Security/YunohostLdapUserProvider.php
 @@ -0,0 +1,102 @@
 +<?php
 +

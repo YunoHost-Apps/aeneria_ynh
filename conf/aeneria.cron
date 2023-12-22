@@ -1,2 +1,2 @@
-__MINUTES__ __HOUR__-23/3 * * * __APP__ /usr/bin/php__PHPVERSION__ __INSTALL_DIR__/app/bin/console aeneria:fetch-data
-*/15 * * * * __APP__ /usr/bin/php__PHPVERSION__ __INSTALL_DIR__/app/bin/console aeneria:pending-action:process-expired
+__MINUTES__ __HOUR__-23/3 * * * __APP__ /usr/bin/php__PHPVERSION__ __INSTALL_DIR__/bin/console aeneria:fetch-data
+*/15 * * * * __APP__ /usr/bin/php__PHPVERSION__ __INSTALL_DIR__/bin/console aeneria:pending-action:process-expired
