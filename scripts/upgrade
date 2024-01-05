@@ -28,6 +28,8 @@ if [ -z "${minutes:-}" ] || [ -z "${hour:-}" ]; then
 	generate_random_minutes_hour
 fi
 
+ynh_print_info --message="app: $app - domain: $domain - path: $path"
+
 # Before version 2.x æneria could be installed under a path,
 # this functionnality has been deprecated since version 2.0.0 and æneria
 # now need to be installed under its own domain.
