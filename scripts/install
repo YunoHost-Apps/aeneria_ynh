@@ -57,11 +57,11 @@ ynh_script_progression --message="Installing aeneria..." --weight=1
 
 # Install aeneria
 pushd $install_dir
-	ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
-	# Create admin user
-	mail=$(ynh_user_get_info --username="$admin" --key='mail')
-	ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$(ynh_string_random)" -n
-	ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
+  ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
+  # Create admin user
+  mail=$(ynh_user_get_info --username="$admin" --key='mail')
+  ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$(ynh_string_random)" -n
+  ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
 popd
 
 #=================================================
