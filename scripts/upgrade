@@ -28,14 +28,12 @@ if [ -z "${minutes:-}" ] || [ -z "${hour:-}" ]; then
 	generate_random_minutes_hour
 fi
 
-ynh_print_info --message="app: $app - domain: $domain - path: $path"
-
 # Before version 2.x æneria could be installed under a path,
 # this functionnality has been deprecated since version 2.0.0 and æneria
 # now need to be installed under its own domain.
 # If the app is currently installed under a path, we warn the admin
 # that he should move the app under its own domain
-if [[ -z "$path" ]]; then
+if [ -n "$path" ]; then
    ynh_die --message="Since version 2.0.0, $app need to be installed under its own domain. \
 	 Before upgrading, change $app URL: delete the path and switch to a new domain if needed."
 fi
