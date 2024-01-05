@@ -14,16 +14,14 @@ license = "AGPL-3.0-or-later"
 website = "https://aeneria.com"
 admindoc = "https://docs.aeneria.com"
 code = "https://gitlab.com/aeneria/aeneria-app"
+demo = "https://demo.aeneria.com"
 
 [integration]
 yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = true
-
 ldap = true
-
 sso = true
-
 disk = "50M"
 ram.build = "50M"
 ram.runtime = "50M"
@@ -31,10 +29,6 @@ ram.runtime = "50M"
 [install]
     [install.domain]
     type = "domain"
-
-    [install.path]
-    type = "path"
-    default = "/aeneria"
 
     [install.admin]
     type = "user"
