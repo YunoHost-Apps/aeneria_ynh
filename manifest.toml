@@ -5,7 +5,7 @@ name = "æneria"
 description.en = "Dashboard to analyse your energy consumption data from Linky, Gazpar & weather"
 description.fr = "Tableau de bord pour analyser votre consomation d'énergie à partir des données d'un compteur Linky et/ou Gazpar et de la météo"
 
-version = "2.0.0~ynh1"
+version = "2.0.3~ynh1"
 
 maintainers = ["Simon Mellerin"]
 
@@ -41,8 +41,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://statics.aeneria.com/aeneria-app-2.0.0.tar.gz"
-    sha256 = "8a36dc2634178e6f087893aca6459ef7cbe7ad9e436c829a7f05f88a8a304571"
+    url = "https://statics.aeneria.com/aeneria-app-2.0.3.tar.gz"
+    sha256 = "98322ac8074df007328e66cb9a5561e7e9bbbd8fefba5ef6a14cff54507e85c6"
 
     [resources.system_user]
 
