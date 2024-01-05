@@ -23,6 +23,8 @@ L'idée de [æneria](https://aeneria.com) est d'afficher la consommation d'éner
 
 **Version incluse :** 2.0.0~ynh1
 
+**Démo :** https://demo.aeneria.com
+
 ## Captures d’écran
 
 ![Capture d’écran de æneria](./doc/screenshots/preview-2.png)

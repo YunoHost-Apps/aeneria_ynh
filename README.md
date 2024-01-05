@@ -24,6 +24,8 @@ The idea of [æneria](https://aeneria.com) is to display energy consumption and 
 
 **Shipped version:** 2.0.0~ynh1
 
+**Demo:** https://demo.aeneria.com
+
 ## Screenshots
 
 ![Screenshot of æneria](./doc/screenshots/preview-2.png)
