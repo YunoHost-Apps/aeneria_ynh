@@ -4,10 +4,10 @@ Date:   Sun Jan 7 16:25:06 2024 +0100
 
     YNH LDAP
 
-diff --git a/app/config/packages/security.yaml b/app/config/packages/security.yaml
+diff --git a/config/packages/security.yaml b/config/packages/security.yaml
 index 6c4457f1..e716ba39 100644
---- a/app/config/packages/security.yaml
-+++ b/app/config/packages/security.yaml
+--- a/config/packages/security.yaml
++++ b/config/packages/security.yaml
 @@ -11,6 +11,11 @@ security:
              entity:
                  class: App\Entity\User
@@ -33,10 +33,10 @@ index 6c4457f1..e716ba39 100644
              logout:
                  path: security.logout
                  target: security.login
-diff --git a/app/config/services.yaml b/app/config/services.yaml
+diff --git a/config/services.yaml b/config/services.yaml
 index 3e770913..83fbec0d 100644
---- a/app/config/services.yaml
-+++ b/app/config/services.yaml
+--- a/config/services.yaml
++++ b/config/services.yaml
 @@ -104,3 +104,21 @@ services:
 
      Aeneria\GrdfAdictApi\Client\GrdfAdictClientInterface:
@@ -59,11 +59,11 @@ index 3e770913..83fbec0d 100644
 +        class: Symfony\Component\Ldap\Adapter\ExtLdap\Adapter
 +        arguments:
 +            - host: "localhost"
-diff --git a/app/src/Security/YnhLdapUserProvider.php b/app/src/Security/YnhLdapUserProvider.php
+diff --git a/src/Security/YnhLdapUserProvider.php b/src/Security/YnhLdapUserProvider.php
 new file mode 100755
 index 00000000..eb8b1149
 --- /dev/null
-+++ b/app/src/Security/YnhLdapUserProvider.php
++++ b/src/Security/YnhLdapUserProvider.php
 @@ -0,0 +1,79 @@
 +<?php
 +
@@ -142,113 +142,5 @@ index 00000000..eb8b1149
 +        return $user->setUsername($identifier)
 +            ->setEmail(\reset($email))
 +        ;
-+    }
-+}
-diff --git a/app/src/Security/YunohostLdapUserProvider.php b/app/src/Security/YunohostLdapUserProvider.php
-new file mode 100755
-index 00000000..09ad20c6
---- /dev/null
-+++ b/app/src/Security/YunohostLdapUserProvider.php
-@@ -0,0 +1,102 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace App\Security;
-+
-+use App\Entity\User;
-+use App\Repository\UserRepository;
-+use Symfony\Component\Ldap\Entry;
-+use Symfony\Component\Ldap\Exception\ConnectionException;
-+use Symfony\Component\Ldap\LdapInterface;
-+use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
-+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-+use Symfony\Component\Security\Core\User\UserInterface;
-+use Symfony\Component\Security\Core\User\UserProviderInterface;
-+
-+/**
-+ * Adapted from LdapUserProvider.
-+ *
-+ */
-+class YunohostLdapUserProvider implements UserProviderInterface
-+{
-+    private string $defaultSearch = '(uid={username})';
-+
-+    public function __construct(
-+        private LdapInterface $ldap,
-+        private string $baseDn,
-+        private UserRepository $userRepository,
-+        private ?string $searchDn = null,
-+        private ?string $searchPassword = null,
-+    ) {}
-+
-+    /**
-+     * {@inheritdoc}
-+     */
-+    public function loadUserByUsername(string $username)
-+    {
-+        trigger_deprecation('symfony/security-core', '5.3', 'Method "%s()" is deprecated, use loadUserByIdentifier() instead.', __METHOD__);
-+
-+        return $this->loadUserByIdentifier($username);
-+    }
-+
-+    /**
-+     * {@inheritdoc}
-+     */
-+    public function loadUserByIdentifier(string $identifier): UserInterface
-+    {
-+        try {
-+            $this->ldap->bind($this->searchDn, $this->searchPassword);
-+            $username = $this->ldap->escape($identifier, '', LdapInterface::ESCAPE_FILTER);
-+            $query = str_replace('{username}', $identifier, $this->defaultSearch);
-+            $search = $this->ldap->query($this->baseDn, $query);
-+        } catch (ConnectionException $e) {
-+            throw new UserNotFoundException(sprintf('User "%s" not found.', $identifier), 0, $e);
-+        }
-+
-+        $entries = $search->execute();
-+        $count = \count($entries);
-+
-+        if ($count > 1) {
-+            throw new UserNotFoundException('More than one user found.');
-+        }
-+
-+        $entry = $entries[0];
-+
-+        $identifier = $this->getAttributeValue($entry, 'mail');
-+
-+        return $this->userRepository->findOneBy(['username' => $identifier]);
-+    }
-+
-+    /**
-+     * {@inheritdoc}
-+     */
-+    public function refreshUser(UserInterface $user)
-+    {
-+        if (!$user instanceof User) {
-+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
-+        }
-+
-+        return $this->userRepository->findOneBy(['username' => $user->getUsername()]);
-+    }
-+
-+    /**
-+     * {@inheritdoc}
-+     */
-+    public function supportsClass(string $class)
-+    {
-+        return User::class === $class;
-+    }
-+
-+    private function getAttributeValue(Entry $entry, string $attribute)
-+    {
-+        if (!$entry->hasAttribute($attribute)) {
-+            throw new InvalidArgumentException(sprintf('Missing attribute "%s" for user "%s".', $attribute, $entry->getDn()));
-+        }
-+
-+        $values = $entry->getAttribute($attribute);
-+
-+        return $values[0];
 +    }
 +}
