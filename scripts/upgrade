@@ -46,22 +46,8 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
   ynh_script_progression --message="Upgrading source files..."
 
-  # For aeneria source update, we use a temporary directory because
-  # without it, patches can't be apply correctly:
-  # In 'app-00-ldap-auth.patch' we create a new file, if we try
-  # to apply the patch a second time while the file already exists, it
-  # throws a warning leading to an upgrade fail.
-
-  # Create tmpdir for new sources
-  tmpdir="$(ynh_smart_mktemp min_size=300)"
-
   # Download, check integrity, uncompress and patch the source from app.src
-  ynh_setup_source --dest_dir="$tmpdir"
-
-  # Replace the old aeneria by the new one
-  ynh_secure_remove --file="$install_dir"
-  mv "$tmpdir" "$install_dir"
-  ynh_secure_remove --file="$tmpdir"
+  ynh_setup_source --dest_dir="$install_dir" --full_replace
 fi
 
 chown -R $app:www-data "$install_dir"

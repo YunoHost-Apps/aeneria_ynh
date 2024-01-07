@@ -1,59 +1,154 @@
-commit 19648694faaf973e7b4b0de1dbe49710e14a8ce7
+commit 7a3e622666fa16ab124158cffec73d9a3e6748bf
 Author: Simon Mellerin <simon.mellerin@makina-corpus.com>
-Date:   Fri Dec 22 17:22:41 2023 +0100
+Date:   Sun Jan 7 16:25:06 2024 +0100
 
-    Yunohost ldap
+    YNH LDAP
 
-diff --git a/config/packages/security.yaml b/config/packages/security.yaml
-index 6c4457f1..ea1f3dc9 100644
---- a/config/packages/security.yaml
-+++ b/config/packages/security.yaml
-@@ -11,6 +11,8 @@ security:
+diff --git a/app/config/packages/security.yaml b/app/config/packages/security.yaml
+index 6c4457f1..e716ba39 100644
+--- a/app/config/packages/security.yaml
++++ b/app/config/packages/security.yaml
+@@ -11,6 +11,11 @@ security:
              entity:
                  class: App\Entity\User
                  property: username
-+        user_provider_yunohost:
-+            id: yunohost.provider.ldap
++        ldap_user_provider:
++            id: ynh.ldap.user.provider
++        all_users:
++            chain:
++                providers: ['ldap_user_provider', 'app_user_provider']
      firewalls:
          dev:
              pattern: ^/(_(profiler|wdt)|css|images|js)/
-@@ -23,6 +25,10 @@ security:
+@@ -22,7 +27,12 @@ security:
+             form_login:
                  login_path: security.login
                  check_path: security.login
++                provider: app_user_provider
                  enable_csrf: true
 +            http_basic_ldap:
-+                provider: user_provider_yunohost
-+                service: yunohost.ldap
-+                dn_string: "uid={username},ou=users,dc=yunohost,dc=org"
++                provider: ldap_user_provider
++                service: ynh.ldap
++                dn_string: 'uid={username},ou=users,dc=yunohost,dc=org'
              logout:
                  path: security.logout
                  target: security.login
-diff --git a/config/services.yaml b/config/services.yaml
-index 4410bfc5..71b9ba86 100644
---- a/config/services.yaml
-+++ b/config/services.yaml
-@@ -105,3 +105,16 @@ services:
+diff --git a/app/config/services.yaml b/app/config/services.yaml
+index 3e770913..83fbec0d 100644
+--- a/app/config/services.yaml
++++ b/app/config/services.yaml
+@@ -104,3 +104,21 @@ services:
 
      Aeneria\GrdfAdictApi\Client\GrdfAdictClientInterface:
          alias: Aeneria\GrdfAdictApi\Client\GrdfAdictClient
 +
-+    yunohost.provider.ldap:
-+        class: App\Security\YunohostLdapUserProvider
-+        arguments: ["@yunohost.ldap", "ou=users,dc=yunohost,dc=org"]
++    ynh.ldap.user.provider:
++        class: App\Security\YnhLdapUserProvider
++        arguments:
++            $ldap: '@ynh.ldap'
++            $baseDn: "dc=yunohost,dc=org"
++            # $searchDn: 'uid={username},ou=users,dc=yunohost,dc=org'
++            $uidKey: "uid"
 +
-+    yunohost.ldap:
++    ynh.ldap:
 +        class: Symfony\Component\Ldap\Ldap
-+        arguments: ['@yunohost.ldap.adapter']
++        arguments: ['@ynh.ldap.adapter']
++        tags: ['ldap']
 +
-+    yunohost.ldap.adapter:
++    ynh.ldap.adapter:
 +        class: Symfony\Component\Ldap\Adapter\ExtLdap\Adapter
 +        arguments:
 +            - host: "localhost"
-diff --git a/src/Security/YunohostLdapUserProvider.php b/src/Security/YunohostLdapUserProvider.php
-new file mode 100644
+diff --git a/app/src/Security/YnhLdapUserProvider.php b/app/src/Security/YnhLdapUserProvider.php
+new file mode 100755
+index 00000000..eb8b1149
+--- /dev/null
++++ b/app/src/Security/YnhLdapUserProvider.php
+@@ -0,0 +1,79 @@
++<?php
++
++namespace App\Security;
++
++use App\Entity\User;
++use App\Repository\UserRepository;
++use Doctrine\ORM\EntityManagerInterface;
++use Symfony\Component\Ldap\Entry;
++use Symfony\Component\Ldap\LdapInterface;
++use Symfony\Component\Ldap\Security\LdapUserProvider as SecurityLdapUserProvider;
++use Symfony\Component\Security\Core\User\UserInterface;
++
++class YnhLdapUserProvider extends SecurityLdapUserProvider
++{
++    public function __construct(
++        private EntityManagerInterface $entityManager,
++        private UserRepository $userRepository,
++        LdapInterface $ldap,
++        string $baseDn,
++        string $searchDn = null,
++        string $searchPassword = null,
++        array $defaultRoles = [],
++        string $uidKey = null,
++        string $filter = null,
++        string $passwordAttribute = null,
++        array $extraFields = [])
++    {
++        parent::__construct(
++            $ldap,
++            $baseDn,
++            $searchDn,
++            $searchPassword,
++            $defaultRoles,
++            $uidKey,
++            $filter,
++            $passwordAttribute,
++            $extraFields,
++        );
++    }
++    /**
++     * {@inheritdoc}
++     */
++    public function supportsClass(string $class)
++    {
++        return LdapUser::class === $class;
++    }
++
++    /**
++     * Loads a user from an LDAP entry.
++     *
++     * @return UserInterface
++     */
++    protected function loadUser(string $identifier, Entry $entry)
++    {
++        $email = $entry->getAttribute('mail');
++
++        // Dans le cadre de la connexion LDAP Yunohost,
++        // on cherche l'utilisateur par son id et son mail,
++        // puis on l'enregistre uniquement avec son id.
++        $user = $this->userRepository->findOneBy(['username' => [...$email, $identifier]]);
++
++        // Si l'utilisateur n'existe pas enore, on le crée.
++        if (!$user) {
++            $user = (new User())
++                ->setUsername($identifier)
++                ->setPassword(\random_bytes(32))
++                ->setActive(true)
++                ->setUpdatedAt(new \DateTimeImmutable())
++            ;
++
++            $this->entityManager->persist($user);
++            $this->entityManager->flush();
++        }
++
++        return $user->setUsername($identifier)
++            ->setEmail(\reset($email))
++        ;
++    }
++}
+diff --git a/app/src/Security/YunohostLdapUserProvider.php b/app/src/Security/YunohostLdapUserProvider.php
+new file mode 100755
 index 00000000..09ad20c6
 --- /dev/null
-+++ b/src/Security/YunohostLdapUserProvider.php
++++ b/app/src/Security/YunohostLdapUserProvider.php
 @@ -0,0 +1,102 @@
 +<?php
 +
