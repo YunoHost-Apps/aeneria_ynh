@@ -122,14 +122,14 @@ index 00000000..eb8b1149
 +        $email = $entry->getAttribute('mail');
 +
 +        // Dans le cadre de la connexion LDAP Yunohost,
-+        // on cherche l'utilisateur par son id et son mail,
-+        // puis on l'enregistre uniquement avec son id.
-+        $user = $this->userRepository->findOneBy(['username' => [...$email, $identifier]]);
++        // on cherche l'utilisateur par son mail.
++        //
++        $user = $this->userRepository->findOneBy(['username' => $email]);
 +
-+        // Si l'utilisateur n'existe pas enore, on le crée.
++        // Si l'utilisateur n'existe pas encore, on le crée.
 +        if (!$user) {
 +            $user = (new User())
-+                ->setUsername($identifier)
++                ->setUsername(\reset($email))
 +                ->setPassword(\random_bytes(32))
 +                ->setActive(true)
 +                ->setUpdatedAt(new \DateTimeImmutable())
@@ -139,8 +139,8 @@ index 00000000..eb8b1149
 +            $this->entityManager->flush();
 +        }
 +
-+        return $user->setUsername($identifier)
-+            ->setEmail(\reset($email))
++        return $user->setUsername(\reset($email))
++            ->setIdentifier($identifier)
 +        ;
 +    }
 +}
