@@ -3,7 +3,7 @@ packaging_format = 2
 id = "aeneria"
 name = "æneria"
 description.en = "Dashboard to analyse your energy consumption data from Linky, Gazpar & weather"
-description.fr = "Tableau de bord pour analyser votre consomation d'énergie à partir des données d'un compteur Linky et/ou Gazpar et de la météo"
+description.fr = "Dashboard pour analyser vos données de consommation d'énergie Linky, Gazpar et météo"
 
 version = "2.0.0~ynh1"
 
@@ -20,8 +20,11 @@ demo = "https://demo.aeneria.com"
 yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = true
+
 ldap = true
+
 sso = true
+
 disk = "50M"
 ram.build = "50M"
 ram.runtime = "50M"
@@ -34,8 +37,8 @@ ram.runtime = "50M"
     type = "user"
 
     [install.init_main_permission]
-    help.en = "Choose whether the app should be accessible only for your yunohost users or for everyone."
-    help.fr = "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs yunohost ou pour tout le monde."
+    help.en = "Choose whether the app should be accessible only for your YunoHost users or for everyone."
+    help.fr = "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs YunoHost ou pour tout le monde."
     type = "group"
     default = false
 
