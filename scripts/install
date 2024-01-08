@@ -14,7 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 deskey=$(ynh_string_random --length=24)
-ynh_app_setting_set --app=$app --key=deskey --value=$deskey
+ynh_app_setting_set --app="$app" --key=deskey --value="$deskey"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -25,7 +25,7 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 ynh_setup_source --dest_dir="$install_dir"
 
 chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # SYSTEM CONFIGURATION
@@ -56,12 +56,14 @@ chmod 600 "$install_dir/.env"
 ynh_script_progression --message="Installing aeneria..." --weight=1
 
 # Install aeneria
-pushd $install_dir
-	ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
+pushd "$install_dir"
+	ynh_exec_as "$app" "php$phpversion" bin/console aeneria:install "$app" -n
 	# Create admin user
 	mail=$(ynh_user_get_info --username="$admin" --key='mail')
-	ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$(ynh_string_random)" -n
-	ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
+	default_password="$(ynh_string_random)"
+	ynh_app_setting_set --app="$app" --key=default_password --value="$default_password"
+	ynh_exec_as "$app" "php$phpversion" bin/console aeneria:user:add "$mail" "$default_password" -n
+	ynh_exec_as "$app" "php$phpversion" bin/console aeneria:user:grant "$mail"
 popd
 
 #=================================================

@@ -55,7 +55,7 @@ then
 fi
 
 chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
@@ -90,21 +90,23 @@ chmod 600 "$install_dir/.env"
 ynh_script_progression --message="Upgrading $app..." --weight=1
 
 # Install dependencies and aeneria
-pushd $install_dir
-	ynh_exec_as $app php$phpversion bin/console cache:clear -n
-	ynh_exec_as $app php$phpversion bin/console doctrine:migrations:migrate -n
+pushd "$install_dir"
+	ynh_exec_as "$app" "php$phpversion" bin/console cache:clear -n
+	ynh_exec_as "$app" "php$phpversion" bin/console doctrine:migrations:migrate -n
 
 	# Set admin user
 	mail=$(ynh_user_get_info --username="$admin" --key='mail')
-	user_exists=$(ynh_exec_as $app php$phpversion bin/console aeneria:user:exist "$mail")
-	if [ $user_exists -eq 0 ]
+	user_exists=$(ynh_exec_as "$app" "php$phpversion" bin/console aeneria:user:exist "$mail")
+	if [ "$user_exists" -eq 0 ]
 	then
-		user_pass=$(ynh_string_random)
-		ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$user_pass" -n
+		default_password=$(ynh_string_random)
+		ynh_app_setting_set --app="$app" --key=default_password --value="$default_password"
+		ynh_exec_as "$app" "php$phpversion" bin/console aeneria:user:add "$mail" "$default_password" -n
+		ynh_print_info --message="An æneria user as been created. Your login: $mail Your password: $default_password"
 	fi
 
 	# Regenerate RSA keys
-	ynh_exec_as $app php$phpversion bin/console aeneria:generate-key --force -n
+	ynh_exec_as "$app" "php$phpversion" bin/console aeneria:generate-key --force -n
 popd
 
 #=================================================

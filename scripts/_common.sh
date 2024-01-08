@@ -19,8 +19,8 @@
 generate_random_minutes_hour () {
 	minutes="$(ynh_string_random --length=1 --filter=0-5)$(ynh_string_random --length=1 --filter=0-9)"
 	hour="$(ynh_string_random --length=1 --filter=0-2)"
-	ynh_app_setting_set --app=$app --key=minutes --value=$minutes
-	ynh_app_setting_set --app=$app --key=hour --value=$hour
+	ynh_app_setting_set --app="$app" --key=minutes --value="$minutes"
+	ynh_app_setting_set --app="$app" --key=hour --value="$hour"
 }
 
 #=================================================
@@ -46,7 +46,7 @@ ynh_smart_mktemp () {
         # Check if there's enough free space in a directory
         is_there_enough_space () {
                 local free_space=$(df --output=avail "$1" | sed 1d)
-                test $free_space -ge $min_size
+                test "$free_space" -ge $min_size
         }
 
         if is_there_enough_space /tmp; then
