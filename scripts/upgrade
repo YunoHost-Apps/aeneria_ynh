@@ -58,6 +58,9 @@ then
   # Download, check integrity, uncompress and patch the source from app.src
   ynh_setup_source --dest_dir="$tmpdir"
 
+  # Keep private dir
+  mv "$install_dir/private" "$tmpdir"
+
   # Replace the old aeneria by the new one
   ynh_secure_remove --file="$install_dir"
   mv "$tmpdir" "$install_dir"
@@ -116,14 +119,6 @@ pushd $install_dir
   # Regenerate RSA keys
   ynh_exec_as $app php$phpversion bin/console aeneria:generate-key -n
 popd
-
-#=================================================
-# ADAPT HOOK FOR AENERIA INSTANCE
-#=================================================
-ynh_script_progression --message="Adapting hooks..." --weight=1
-
-ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="../hooks/post_app_addaccess"
-ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="../hooks/post_app_removeaccess"
 
 #=================================================
 # END OF SCRIPT
