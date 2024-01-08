@@ -58,6 +58,9 @@ then
   # Download, check integrity, uncompress and patch the source from app.src
   ynh_setup_source --dest_dir="$tmpdir"
 
+  # Keep private dir
+  mv "$install_dir/private" "$tmpdir"
+
   # Replace the old aeneria by the new one
   ynh_secure_remove --file="$install_dir"
   mv "$tmpdir" "$install_dir"
