@@ -140,7 +140,7 @@ index 00000000..eb8b1149
 +        }
 +
 +        return $user->setUsername(\reset($email))
-+            ->setIdentifier($identifier)
++            ->setUserIdentifier($identifier)
 +        ;
 +    }
 +}
