@@ -44,8 +44,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://statics.aeneria.com/aeneria-app-2.0.6.tar.gz"
-    sha256 = "a13d01d793a0268da9681bc561495e438bc34e1187921f305351f7b734867b5d"
+    url = "https://statics.aeneria.com/aeneria-app-2.0.7.tar.gz"
+    sha256 = "24f62f8ee9a7e2f8ba3ad663e95bff3be05e13fa2737eda0bb2536879214f352"
 
     [resources.system_user]
 
