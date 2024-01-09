@@ -40,7 +40,7 @@ ram.runtime = "50M"
     help.en = "Choose whether the app should be accessible only for your YunoHost users or for everyone."
     help.fr = "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs YunoHost ou pour tout le monde."
     type = "group"
-    default = false
+    default = all_users
 
 [resources]
     [resources.sources.main]

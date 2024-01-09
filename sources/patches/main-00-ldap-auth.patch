@@ -130,7 +130,7 @@ index 00000000..eb8b1149
 +        if (!$user) {
 +            $user = (new User())
 +                ->setUsername(\reset($email))
-+                ->setPassword(\random_bytes(32))
++                ->setPassword(\bin2hex(\random_bytes(32)))
 +                ->setActive(true)
 +                ->setUpdatedAt(new \DateTimeImmutable())
 +            ;
