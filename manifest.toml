@@ -2,10 +2,10 @@ packaging_format = 2
 
 id = "aeneria"
 name = "æneria"
-description.en = "Dashboard to analyse your energy consumption data from Linky, Gazpar & weather"
-description.fr = "Dashboard pour analyser vos données de consommation d'énergie Linky, Gazpar et météo"
+description.en = "Analyse your energy consumption (from Linky & Gazpar) & weather data"
+description.fr = "Analyser sa consommation d'énergie (via Linky & Gazpar) avec des données météo"
 
-version = "2.0.3~ynh1"
+version = "2.0.7~ynh1"
 
 maintainers = ["Simon Mellerin"]
 
