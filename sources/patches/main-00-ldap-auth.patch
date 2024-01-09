@@ -64,7 +64,7 @@ new file mode 100755
 index 00000000..eb8b1149
 --- /dev/null
 +++ b/src/Security/YnhLdapUserProvider.php
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,89 @@
 +<?php
 +
 +namespace App\Security;
@@ -104,12 +104,21 @@ index 00000000..eb8b1149
 +            $extraFields,
 +        );
 +    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function upgradePassword($user, string $newHashedPassword): void
++    {
++        return;
++    }
++
 +    /**
 +     * {@inheritdoc}
 +     */
 +    public function supportsClass(string $class)
 +    {
-+        return LdapUser::class === $class;
++        return User::class === $class;
 +    }
 +
 +    /**
@@ -139,8 +148,10 @@ index 00000000..eb8b1149
 +            $this->entityManager->flush();
 +        }
 +
-+        return $user->setUsername(\reset($email))
++        return $user
++            ->setUsername(\reset($email))
 +            ->setUserIdentifier($identifier)
 +        ;
 +    }
 +}
++
