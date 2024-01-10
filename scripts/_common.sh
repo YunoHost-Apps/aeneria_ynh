@@ -17,10 +17,10 @@
 #   hour: random value between 0 and 2
 # These two variables are used in conf/aeneria.cron so that it runs every 3 hours starting at 00:MM, 01:MM, or 02:MM.
 generate_random_minutes_hour () {
-	minutes="$(ynh_string_random --length=1 --filter=0-5)$(ynh_string_random --length=1 --filter=0-9)"
-	hour="$(ynh_string_random --length=1 --filter=0-2)"
-	ynh_app_setting_set --app=$app --key=minutes --value=$minutes
-	ynh_app_setting_set --app=$app --key=hour --value=$hour
+        minutes="$(ynh_string_random --length=1 --filter=0-5)$(ynh_string_random --length=1 --filter=0-9)"
+        hour="$(ynh_string_random --length=1 --filter=0-2)"
+        ynh_app_setting_set --app=$app --key=minutes --value=$minutes
+        ynh_app_setting_set --app=$app --key=hour --value=$hour
 }
 
 #=================================================

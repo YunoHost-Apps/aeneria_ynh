@@ -2,10 +2,10 @@ packaging_format = 2
 
 id = "aeneria"
 name = "æneria"
-description.en = "Dashboard to analyse your energy consumption data from Linky & weather"
-description.fr = "Tableau de bord pour analyser votre consomation d'énergie à partir des données d'un Linky et de la météo"
+description.en = "Analyse your energy consumption (from Linky & Gazpar) & weather data"
+description.fr = "Analyser sa consommation d'énergie (via Linky & Gazpar) avec des données météo"
 
-version = "1.1.6~ynh5"
+version = "2.0.7~ynh1"
 
 maintainers = ["Simon Mellerin"]
 
@@ -14,15 +14,16 @@ license = "AGPL-3.0-or-later"
 website = "https://aeneria.com"
 admindoc = "https://docs.aeneria.com"
 code = "https://gitlab.com/aeneria/aeneria-app"
+demo = "https://demo.aeneria.com"
 
 [integration]
 yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = true
 
-ldap = false
+ldap = true
 
-sso = false
+sso = true
 
 disk = "50M"
 ram.build = "50M"
@@ -32,24 +33,19 @@ ram.runtime = "50M"
     [install.domain]
     type = "domain"
 
-    [install.path]
-    type = "path"
-    default = "/aeneria"
-
     [install.admin]
     type = "user"
 
     [install.init_main_permission]
-    help.en = "Choose whether the app should be accessible only for your yunohost users or for everyone."
-    help.fr = "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs yunohost ou pour tout le monde."
+    help.en = "Choose whether the app should be accessible only for your YunoHost users or for everyone."
+    help.fr = "Choisissez si l'application doit être accessible uniquement pour vos utilisateurs YunoHost ou pour tout le monde."
     type = "group"
-    default = false
+    default = "all_users"
 
 [resources]
-        [resources.sources.main]
-        url = "https://statics.aeneria.com/aeneria-app-1.1.6.tar.gz"
-        sha256 = "2923c3aee79a02154c2168537a18250abe6a3a84fd7b4a5f0309bd7ad604a98b"
-
+    [resources.sources.main]
+    url = "https://statics.aeneria.com/aeneria-app-2.0.7.tar.gz"
+    sha256 = "24f62f8ee9a7e2f8ba3ad663e95bff3be05e13fa2737eda0bb2536879214f352"
 
     [resources.system_user]
 
@@ -59,7 +55,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "postgresql, apt-transport-https, postgresql-contrib, php7.4-zip, php7.4-pgsql, php7.4-xml, php7.4-intl, php7.4-mbstring, php7.4-gd, php7.4-curl, php7.4-bcmath, php7.4-opcache"
+    packages = "postgresql, apt-transport-https, postgresql-contrib, php8.2-zip, php8.2-pgsql, php8.2-xml, php8.2-intl, php8.2-gd, php8.2-curl, php8.2-bcmath, php8.2-opcache, php8.2-ldap"
 
     [resources.database]
     type = "postgresql"
