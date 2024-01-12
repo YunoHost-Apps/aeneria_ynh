@@ -22,7 +22,7 @@ The idea of [æneria](https://aeneria.com) is to display energy consumption and 
  * Analyse energy consumption throw weather data
 
 
-**Shipped version:** 2.0.7~ynh1
+**Shipped version:** 2.1.0~ynh1
 
 **Demo:** https://demo.aeneria.com
 
