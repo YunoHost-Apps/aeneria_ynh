@@ -1,0 +1,157 @@
+commit 7a3e622666fa16ab124158cffec73d9a3e6748bf
+Author: Simon Mellerin <simon.mellerin@makina-corpus.com>
+Date:   Sun Jan 7 16:25:06 2024 +0100
+
+    YNH LDAP
+
+diff --git a/config/packages/security.yaml b/config/packages/security.yaml
+index 6c4457f1..e716ba39 100644
+--- a/config/packages/security.yaml
++++ b/config/packages/security.yaml
+@@ -11,6 +11,11 @@ security:
+             entity:
+                 class: App\Entity\User
+                 property: username
++        ldap_user_provider:
++            id: ynh.ldap.user.provider
++        all_users:
++            chain:
++                providers: ['ldap_user_provider', 'app_user_provider']
+     firewalls:
+         dev:
+             pattern: ^/(_(profiler|wdt)|css|images|js)/
+@@ -22,7 +27,12 @@ security:
+             form_login:
+                 login_path: security.login
+                 check_path: security.login
++                provider: app_user_provider
+                 enable_csrf: true
++            http_basic_ldap:
++                provider: ldap_user_provider
++                service: ynh.ldap
++                dn_string: 'uid={username},ou=users,dc=yunohost,dc=org'
+             logout:
+                 path: security.logout
+                 target: security.login
+diff --git a/config/services.yaml b/config/services.yaml
+index 3e770913..83fbec0d 100644
+--- a/config/services.yaml
++++ b/config/services.yaml
+@@ -104,3 +104,21 @@ services:
+
+     Aeneria\GrdfAdictApi\Client\GrdfAdictClientInterface:
+         alias: Aeneria\GrdfAdictApi\Client\GrdfAdictClient
++
++    ynh.ldap.user.provider:
++        class: App\Security\YnhLdapUserProvider
++        arguments:
++            $ldap: '@ynh.ldap'
++            $baseDn: "dc=yunohost,dc=org"
++            # $searchDn: 'uid={username},ou=users,dc=yunohost,dc=org'
++            $uidKey: "uid"
++
++    ynh.ldap:
++        class: Symfony\Component\Ldap\Ldap
++        arguments: ['@ynh.ldap.adapter']
++        tags: ['ldap']
++
++    ynh.ldap.adapter:
++        class: Symfony\Component\Ldap\Adapter\ExtLdap\Adapter
++        arguments:
++            - host: "localhost"
+diff --git a/src/Security/YnhLdapUserProvider.php b/src/Security/YnhLdapUserProvider.php
+new file mode 100755
+index 00000000..eb8b1149
+--- /dev/null
++++ b/src/Security/YnhLdapUserProvider.php
+@@ -0,0 +1,89 @@
++<?php
++
++namespace App\Security;
++
++use App\Entity\User;
++use App\Repository\UserRepository;
++use Doctrine\ORM\EntityManagerInterface;
++use Symfony\Component\Ldap\Entry;
++use Symfony\Component\Ldap\LdapInterface;
++use Symfony\Component\Ldap\Security\LdapUserProvider as SecurityLdapUserProvider;
++use Symfony\Component\Security\Core\User\UserInterface;
++
++class YnhLdapUserProvider extends SecurityLdapUserProvider
++{
++    public function __construct(
++        private EntityManagerInterface $entityManager,
++        private UserRepository $userRepository,
++        LdapInterface $ldap,
++        string $baseDn,
++        string $searchDn = null,
++        string $searchPassword = null,
++        array $defaultRoles = [],
++        string $uidKey = null,
++        string $filter = null,
++        string $passwordAttribute = null,
++        array $extraFields = [])
++    {
++        parent::__construct(
++            $ldap,
++            $baseDn,
++            $searchDn,
++            $searchPassword,
++            $defaultRoles,
++            $uidKey,
++            $filter,
++            $passwordAttribute,
++            $extraFields,
++        );
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function upgradePassword($user, string $newHashedPassword): void
++    {
++        return;
++    }
++
++    /**
++     * {@inheritdoc}
++     */
++    public function supportsClass(string $class)
++    {
++        return User::class === $class;
++    }
++
++    /**
++     * Loads a user from an LDAP entry.
++     *
++     * @return UserInterface
++     */
++    protected function loadUser(string $identifier, Entry $entry)
++    {
++        $email = $entry->getAttribute('mail');
++
++        // Dans le cadre de la connexion LDAP Yunohost,
++        // on cherche l'utilisateur par son mail.
++        //
++        $user = $this->userRepository->findOneBy(['username' => $email]);
++
++        // Si l'utilisateur n'existe pas encore, on le crée.
++        if (!$user) {
++            $user = (new User())
++                ->setUsername(\reset($email))
++                ->setPassword(\bin2hex(\random_bytes(32)))
++                ->setActive(true)
++                ->setUpdatedAt(new \DateTimeImmutable())
++            ;
++
++            $this->entityManager->persist($user);
++            $this->entityManager->flush();
++        }
++
++        return $user
++            ->setUsername(\reset($email))
++            ->setUserIdentifier($identifier)
++        ;
++    }
++}
++
