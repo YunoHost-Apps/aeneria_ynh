@@ -46,6 +46,7 @@ ram.runtime = "50M"
     [resources.sources.main]
     url = "https://statics.aeneria.com/aeneria-app-2.1.1.tar.gz"
     sha256 = "bcad15e29f7b8ab14a45970a2baa3389be116583f61051876b43a292cbc38d91"
+    autoupdate.strategy = "latest_gitlab_release"
 
     [resources.system_user]
 
