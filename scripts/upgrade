@@ -56,7 +56,7 @@ then
   tmpdir="$(ynh_smart_mktemp min_size=300)"
 
   # Download, check integrity, uncompress and patch the source from app.src
-  ynh_setup_source --dest_dir="$tmpdir"
+  ynh_setup_source --dest_dir="$tmpdir" --full_replace=1
 
   # Keep private dir
   mv "$install_dir/private" "$tmpdir"
