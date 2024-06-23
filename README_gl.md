@@ -28,9 +28,9 @@ The idea of [æneria](https://aeneria.com) is to display energy consumption and 
 
 ## Capturas de pantalla
 
-![Captura de pantalla de æneria](./doc/screenshots/preview-1.png)
 ![Captura de pantalla de æneria](./doc/screenshots/preview-2.png)
 ![Captura de pantalla de æneria](./doc/screenshots/preview-3.png)
+![Captura de pantalla de æneria](./doc/screenshots/preview-1.png)
 
 ## Documentación e recursos
 
