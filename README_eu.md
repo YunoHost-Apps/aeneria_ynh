@@ -28,9 +28,9 @@ The idea of [æneria](https://aeneria.com) is to display energy consumption and 
 
 ## Pantaila-argazkiak
 
+![æneria(r)en pantaila-argazkia](./doc/screenshots/preview-1.png)
 ![æneria(r)en pantaila-argazkia](./doc/screenshots/preview-2.png)
 ![æneria(r)en pantaila-argazkia](./doc/screenshots/preview-3.png)
-![æneria(r)en pantaila-argazkia](./doc/screenshots/preview-1.png)
 
 ## Dokumentazioa eta baliabideak
 
