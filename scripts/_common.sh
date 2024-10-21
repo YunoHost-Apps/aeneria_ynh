@@ -1,11 +1,7 @@
 #!/bin/bash
 
 #=================================================
-# COMMON VARIABLES
-#=================================================
-
-#=================================================
-# PERSONAL HELPERS
+# COMMON VARIABLES AND CUSTOM HELPERS
 #=================================================
 
 # Assign two variables:
@@ -19,13 +15,9 @@
 generate_random_minutes_hour () {
         minutes="$(ynh_string_random --length=1 --filter=0-5)$(ynh_string_random --length=1 --filter=0-9)"
         hour="$(ynh_string_random --length=1 --filter=0-2)"
-        ynh_app_setting_set --app=$app --key=minutes --value=$minutes
-        ynh_app_setting_set --app=$app --key=hour --value=$hour
+        ynh_app_setting_set --key=minutes --value=$minutes
+        ynh_app_setting_set --key=hour --value=$hour
 }
-
-#=================================================
-# EXPERIMENTAL HELPERS
-#=================================================
 
 # Check available space before creating a temp directory.
 #
@@ -63,7 +55,3 @@ ynh_smart_mktemp () {
 
         echo "$(mktemp --directory --tmpdir="$tmpdir")"
 }
-
-#=================================================
-# FUTURE OFFICIAL HELPERS
-#=================================================

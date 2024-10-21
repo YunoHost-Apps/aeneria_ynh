@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC STARTING
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -19,21 +13,19 @@ source /usr/share/yunohost/helpers
 # If the app is currently installed under a path, we warn the admin
 # that he should move the app under its own domain
 if [ "$path" != "/" ]; then
-  ynh_die --message="Since version 2.0.0, $app need to be installed under its own domain. \
+  ynh_die "Since version 2.0.0, $app need to be installed under its own domain. \
   Before upgrading, change $app URL: delete the path and switch to a new domain if needed."
 fi
 
 #=================================================
-# STANDARD MODIFICATIONS
-#=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Updating NGINX web server configuration..." --weight=3
+ynh_script_progression "Updating NGINX web server configuration..."
 
-ynh_change_url_nginx_config
+ynh_config_change_url_nginx
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Change of URL completed for $app" --last
+ynh_script_progression "Change of URL completed for $app"

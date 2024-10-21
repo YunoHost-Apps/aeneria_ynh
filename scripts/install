@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -14,14 +8,13 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 deskey=$(ynh_string_random --length=24)
-ynh_app_setting_set --app=$app --key=deskey --value=$deskey
+ynh_app_setting_set --key=deskey --value=$deskey
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --weight=1
+ynh_script_progression "Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir"
 
 chown -R $app:www-data "$install_dir"
@@ -30,54 +23,46 @@ chmod -R 750 "$install_dir"
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
+ynh_script_progression "Adding system configurations related to $app..."
 
-# Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
-# Create a dedicated PHP-FPM config
-ynh_add_fpm_config
+ynh_config_add_phpfpm
 
-#=================================================
-# SPECIFIC SETUP
 #=================================================
 # CONFIGURE AENERIA
 #=================================================
-ynh_script_progression --message="Configuring $app..." --weight=1
+ynh_script_progression "Configuring $app..."
 
-ynh_add_config --template=".env" --destination="$install_dir/.env"
+ynh_config_add --template=".env" --destination="$install_dir/.env"
 
-# Restrict rights to aeneria user only
 chmod 600 "$install_dir/.env"
 
 #=================================================
 # INSTALL AENERIA
 #=================================================
-ynh_script_progression --message="Installing aeneria..." --weight=1
+ynh_script_progression "Installing $app..."
 
-# Install aeneria
 pushd $install_dir
-  ynh_exec_as $app php$phpversion bin/console aeneria:install "$app" -n
+  ynh_exec_as_app php$php_version bin/console aeneria:install "$app" -n
   # Create admin user
   mail=$(ynh_user_get_info --username="$admin" --key='mail')
-  ynh_exec_as $app php$phpversion bin/console aeneria:user:add "$mail" "$(ynh_string_random)" -n
-  ynh_exec_as $app php$phpversion bin/console aeneria:user:grant "$mail"
+  ynh_exec_as_app php$php_version bin/console aeneria:user:add "$mail" "$(ynh_string_random)" -n
+  ynh_exec_as_app php$php_version bin/console aeneria:user:grant "$mail"
 popd
 
 #=================================================
 # SET UP CRON JOB
 #=================================================
-ynh_script_progression --message="Setuping a cron..." --weight=1
+ynh_script_progression "Setuping a cron..."
 
 # Generate random running schedule, and save $hour and $minutes as app parameters
 generate_random_minutes_hour
 
-ynh_add_config --template="aeneria.cron" --destination="/etc/cron.d/$app"
-chown root: "/etc/cron.d/$app"
-chmod 644 "/etc/cron.d/$app"
+ynh_config_add --template="aeneria.cron" --destination="/etc/cron.d/$app"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression "Installation of $app completed"
